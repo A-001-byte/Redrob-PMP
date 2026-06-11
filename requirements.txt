@@ -1,0 +1,27 @@
+# Redrob Ranker — all dependencies across all phases.
+# Versions pinned to the environment the submission was built and
+# verified with (Python 3.11, CPU-only at rank time).
+
+# Core ML / retrieval
+sentence-transformers==5.5.1
+faiss-cpu==1.14.2
+rank-bm25==0.2.2
+numpy==2.4.3
+scikit-learn==1.8.0
+
+# Data handling
+pandas==3.0.2
+python-docx==1.2.0
+python-dateutil==2.9.0.post0
+tqdm==4.67.3
+pyyaml==6.0.3
+
+# Web backend (Phase 4)
+fastapi==0.136.1
+uvicorn==0.46.0
+
+# HuggingFace Spaces demo (Phase 4)
+streamlit==1.57.0
+
+# Utilities
+huggingface-hub==1.18.0

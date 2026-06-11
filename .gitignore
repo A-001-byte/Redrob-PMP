@@ -1,0 +1,52 @@
+# Claude — never commit these
+.claude/
+.claude-plugin/
+*.claude
+CLAUDE.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+env/
+.env
+
+# Large data files tracked via Git LFS instead
+data/candidates.jsonl
+precomputed/career_embeddings.npy
+precomputed/summary_embeddings.npy
+precomputed/faiss_index.bin
+precomputed/bm25_index.pkl
+precomputed/features.pkl
+precomputed/texts.pkl
+models/
+
+# Node / frontend build
+web/frontend/node_modules/
+web/frontend/dist/
+web/frontend/.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dev-only labeling tools (not part of submission pipeline)
+data/labeling_candidates.json
+data/labeling_progress.json
+pipeline/sample_for_labeling.py
+pipeline/show_candidate.py
+pipeline/label_candidate.py
+pipeline/inspect_sample.py
+pipeline/audit_full.py
+
+# Temp
+*.tmp
+*.log
+rank_timing.json
