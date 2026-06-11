@@ -1,0 +1,51 @@
+# Redrob Hackathon — Track 01: The Data & AI Challenge
+# Submission Metadata
+
+team:
+  name: "Team PMP"
+  repository: "https://github.com/A-001-byte/Redrob-PMP"
+
+submission:
+  file: "submission/submission.csv"
+  total_candidates_ranked: 100
+  ranking_runtime_seconds: 45
+  ranking_runtime_note: "103s when all dev servers were running alongside; ~45s clean run (measured: 44.95s)"
+
+reproduce:
+  command: "python pipeline/rank.py --precomputed precomputed/ --out submission/submission.csv"
+  docker_command: "docker build -t redrob-ranker . && docker run -v $(pwd)/submission:/app/submission redrob-ranker"
+  validator: "python submission/validate_submission.py submission/submission.csv"
+  requirements: "requirements.txt"
+  python_version: "3.11"
+  hardware: "CPU only — no GPU required"
+  network: "No network access required at ranking time — all models cached locally (HF_HUB_OFFLINE=1 enforced in rank.py)"
+
+pipeline:
+  phases:
+    - name: "Offline pre-computation"
+      scripts: ["pipeline/build_skill_canon.py", "pipeline/build_features.py",
+                "pipeline/build_embeddings.py", "pipeline/build_bm25.py",
+                "pipeline/build_index.py", "pipeline/build_gate_data.py"]
+      note: "Run once to generate precomputed/ artifacts. Takes ~15 min on CPU."
+    - name: "Ranking step"
+      script: "pipeline/rank.py"
+      runtime: "~45 seconds CPU"
+      layers: ["L0 FAISS ANN (top 5000)", "L1 Hybrid SBERT+BM25 (top 500)",
+               "L2 Cross-encoder rerank (top 200)", "L3 Composite score (top 150)",
+               "L5 Assessment hard gate (ranks 1-20)", "L6 Honeypot safety check"]
+
+models:
+  - name: "all-MiniLM-L6-v2"
+    source: "sentence-transformers"
+    cached: "models/models--sentence-transformers--all-MiniLM-L6-v2/"
+    use: "Bi-encoder for SBERT embeddings (career + summary texts, JD, anchors)"
+  - name: "ms-marco-MiniLM-L-6-v2"
+    source: "cross-encoder"
+    cached: "models/models--cross-encoder--ms-marco-MiniLM-L-6-v2/"
+    use: "Cross-encoder re-ranking at Layer 2"
+
+web_interface:
+  local_backend: "uvicorn web.backend.main:app --port 8000"
+  local_frontend: "cd web/frontend && npm install && npm run dev"
+  streamlit: "streamlit run web/streamlit_app.py"
+  sandbox_url: ""    # fill in after HuggingFace Spaces deployment
