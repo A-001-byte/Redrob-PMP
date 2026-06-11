@@ -37,10 +37,13 @@ Validate with the organizer checker:
 python submission/validate_submission.py submission/submission.csv
 ```
 
-> **Note on large artifacts:** `precomputed/` (~700 MB) and `models/`
-> (~200 MB) are not committed to git. Either download them from the GitHub
-> Releases page or regenerate from scratch (see *Offline Pre-computation*,
-> ~15 min, one-time).
+> **Note on large artifacts:** the six large files in `precomputed/`
+> (embeddings, FAISS/BM25 indexes, features/texts pickles, ~700 MB) and
+> `models/` (~200 MB) are not committed to git — the small glue artifacts
+> (`candidate_ids.json`, `gate_data.pkl`, `jd_embedding.npy`, `jd_query.txt`,
+> `negative_anchors.npy`, `skill_canon.pkl`) are. Either download the large
+> files from the GitHub Releases page or regenerate everything from scratch
+> (see *Offline Pre-computation*, ~15 min, one-time).
 
 Docker (Stage 3):
 

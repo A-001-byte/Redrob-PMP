@@ -37,6 +37,9 @@ web/frontend/.vite/
 Thumbs.db
 desktop.ini
 
+# Dev-only sample artifacts (used by inspect_sample.py only)
+precomputed/*_sample.pkl
+
 # Dev-only labeling tools (not part of submission pipeline)
 data/labeling_candidates.json
 data/labeling_progress.json
