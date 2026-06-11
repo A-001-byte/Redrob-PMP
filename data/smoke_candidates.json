@@ -1,0 +1,43 @@
+[
+  {
+    "candidate_id": "SMOKE_001",
+    "profile": {"headline": "Senior ML Engineer", "summary": "Retrieval systems."},
+    "career_history": [],
+    "education": [],
+    "skills": [
+      {"name": "Python", "proficiency": "expert", "endorsements": 10, "duration_months": 60},
+      {"name": "faiss vector search", "proficiency": "advanced", "endorsements": 5, "duration_months": 24},
+      {"name": "Sentence Transformers", "proficiency": "expert", "endorsements": 8, "duration_months": 30},
+      {"name": "ElasticSearch", "proficiency": "advanced", "endorsements": 3, "duration_months": 36}
+    ],
+    "certifications": [],
+    "redrob_signals": {}
+  },
+  {
+    "candidate_id": "SMOKE_002",
+    "profile": {"headline": "HR Manager", "summary": "People ops."},
+    "career_history": [],
+    "education": [],
+    "skills": [
+      {"name": "Recruitment", "proficiency": "expert", "endorsements": 50, "duration_months": 90},
+      {"name": "python programming", "proficiency": "beginner", "endorsements": 1, "duration_months": 2},
+      {"name": "A/B Testing", "proficiency": "intermediate", "endorsements": 2, "duration_months": 12}
+    ],
+    "certifications": [],
+    "redrob_signals": {}
+  },
+  {
+    "candidate_id": "SMOKE_003",
+    "profile": null,
+    "career_history": null,
+    "education": null,
+    "skills": [
+      {"name": "  Recommendation Systems ", "proficiency": "advanced", "endorsements": 4, "duration_months": 20},
+      {"name": null, "proficiency": "expert"},
+      "not-a-dict",
+      {"name": "MLflow", "proficiency": "intermediate", "endorsements": 0, "duration_months": 8}
+    ],
+    "certifications": null,
+    "redrob_signals": null
+  }
+]
