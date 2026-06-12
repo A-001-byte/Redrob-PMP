@@ -32,17 +32,19 @@ machine load). Deterministic: two runs are byte-identical.
 - All 7 checks of `pipeline/verify_phase3.py` pass.
 
 **Outstanding TODO:**
-1. **GitHub Release missing.** README tells organizers to download the six
-   large `precomputed/` files (~700 MB) and `models/` (~200 MB) from the
-   Releases page — **zero releases exist**. Blocked on `gh auth login`.
-2. **HuggingFace Spaces deploy** of `web/streamlit_app.py` (steps in
-   `web/README.md` §3), then fill `web_interface.sandbox_url` in
-   `submission_metadata.yaml` (currently empty) — the organizer template
-   requires a sandbox link.
+1. ✅ **GitHub Release** — done: release `v1.0` with `models.zip` (808.5 MB)
+   and `release-artifacts.2.zip` (423.1 MB).
+2. ✅ **HuggingFace Spaces deploy** — done (2026-06-12):
+   https://huggingface.co/spaces/Buster01/redrob-ranker. Note: HF dropped the
+   native streamlit SDK for new Spaces, so it runs as a **Docker SDK** Space
+   (Dockerfile at Space root wraps `streamlit run web/streamlit_app.py`,
+   `app_port: 8501`, CPU-only torch wheel). `web_interface.sandbox_url` in
+   `submission_metadata.yaml` is filled. `data/candidates.jsonl` intentionally
+   not uploaded — profile drawer degrades gracefully.
 3. `submission_metadata_template.yaml` (organizer template: team contacts, AI
    tools declaration, approach summary ≤200 words, declarations) is **not yet
    fully filled** — our `submission_metadata.yaml` covers reproduction info
-   but not all template fields.
+   but not all template fields. **Remaining: this + organizer portal submission.**
 4. Optional: L4 LightGBM LambdaRank slot is an intentional pass-through
    (`USE_L2_RANKER = False` in rank.py) — documented extension point, not a bug.
 

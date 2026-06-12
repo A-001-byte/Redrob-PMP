@@ -8,8 +8,8 @@ team:
 submission:
   file: "submission/submission.csv"
   total_candidates_ranked: 100
-  ranking_runtime_seconds: 45
-  ranking_runtime_note: "103s when all dev servers were running alongside; ~45s clean run (measured: 44.95s)"
+  ranking_runtime_seconds: 11
+  ranking_runtime_note: "11.2s clean run (recorded in submission/rank_timing.json); ~87s under heavy machine load — still 27x inside the 300s budget"
 
 reproduce:
   command: "python pipeline/rank.py --precomputed precomputed/ --out submission/submission.csv"
@@ -29,8 +29,8 @@ pipeline:
       note: "Run once to generate precomputed/ artifacts. Takes ~15 min on CPU."
     - name: "Ranking step"
       script: "pipeline/rank.py"
-      runtime: "~45 seconds CPU"
-      layers: ["L0 FAISS ANN (top 5000)", "L1 Hybrid SBERT+BM25 (top 500)",
+      runtime: "~11 seconds CPU"
+      layers: ["L0 FAISS ANN (top 5000)", "L1 Weighted RRF SBERT+BM25 (top 500)",
                "L2 Cross-encoder rerank (top 200)", "L3 Composite score (top 150)",
                "L5 Assessment hard gate (ranks 1-20)", "L6 Honeypot safety check"]
 
@@ -48,4 +48,4 @@ web_interface:
   local_backend: "uvicorn web.backend.main:app --port 8000"
   local_frontend: "cd web/frontend && npm install && npm run dev"
   streamlit: "streamlit run web/streamlit_app.py"
-  sandbox_url: ""    # fill in after HuggingFace Spaces deployment
+  sandbox_url: "https://huggingface.co/spaces/Buster01/redrob-ranker"
