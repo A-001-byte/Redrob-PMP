@@ -3,7 +3,7 @@
 Six-layer funnel over the precomputed artifacts, CPU-only, zero network:
 
     L0  FAISS retrieval        top --topk-l0 (5000) by dense cosine vs JD
-    L1  Hybrid re-score        0.70*dense_minmax + 0.30*bm25  -> top 500
+    L1  Hybrid re-score        weighted RRF(dense, bm25)      -> top 500
     L2  Cross-encoder re-rank  ms-marco on (JD query, career_text) -> top 200
     L3  Composite score        scorer.composite_score()       -> top 150
     L4  L2-ranker re-rank      pass-through placeholder       -> top 100
@@ -15,6 +15,8 @@ Design notes (locked by Phase-2 measurement and the submission validator):
 - The BM25 sparse channel uses a fixed keyword query of the JD's
   distinctive lexical terms, validated in Phase-2 checks 5-6 (top-10 all
   relevant). The dense channel uses the full JD-section embedding.
+- L1 fusion is weighted Reciprocal Rank Fusion (70/30, k=60) by default;
+  `--fusion linear` restores the legacy minmax blend for rollback.
 - Raw cross-encoder logits order L2 but never enter the composite
   (uncalibrated scale); they are passed through per candidate for the
   future LightGBM ranker.
@@ -61,6 +63,7 @@ CE_MAX_LENGTH = 512
 # candidates with explicit FAISS/NDCG/retrieval language).
 BM25_QUERY = "production vector search FAISS embeddings ranking NDCG retrieval"
 W_DENSE, W_BM25 = 0.70, 0.30
+RRF_K = 60   # standard reciprocal-rank-fusion constant (Cormack et al.)
 
 FINAL_K = 100          # submission size
 GATE_TOP_N = 20        # L5 applies to ranks 1..20
@@ -82,6 +85,24 @@ def l2_rerank(ordered_ids: list[str], records: dict[str, dict],
     if not use_l2_ranker:
         return ordered_ids
     raise NotImplementedError("LightGBM ranker not trained yet (later phase)")
+
+
+def rrf_fuse(ids: list[str], dense: np.ndarray, sparse: np.ndarray,
+             w_dense: float = W_DENSE, w_sparse: float = W_BM25,
+             k: int = RRF_K) -> np.ndarray:
+    """L1 weighted Reciprocal Rank Fusion over the L0 pool.
+
+    Rank-based, so immune to the scale mismatch between dense cosine and
+    raw BM25 that the linear blend has to minmax away. Ranks are tie-broken
+    by candidate_id ascending — deterministic across runs.
+    """
+    def ranks(scores: np.ndarray) -> np.ndarray:
+        order = sorted(range(len(ids)), key=lambda i: (-scores[i], ids[i]))
+        r = np.empty(len(ids), dtype=np.float64)
+        r[order] = np.arange(1, len(ids) + 1)
+        return r
+
+    return w_dense / (k + ranks(dense)) + w_sparse / (k + ranks(sparse))
 
 
 def minmax(x: np.ndarray) -> np.ndarray:
@@ -107,6 +128,9 @@ def main() -> None:
     parser.add_argument("--topk-l1", type=int, default=500)
     parser.add_argument("--topk-l2", type=int, default=200)
     parser.add_argument("--topk-l3", type=int, default=150)
+    parser.add_argument("--fusion", choices=["rrf", "linear"], default="rrf",
+                        help="L1 dense+sparse fusion: weighted RRF (default) "
+                             "or the legacy 0.70*minmax(dense)+0.30*bm25 blend")
     args = parser.parse_args()
     precomp = Path(args.precomputed)
 
@@ -148,7 +172,11 @@ def main() -> None:
     t0 = time.time()
     bm25_all = score_query(BM25_QUERY, index_path=precomp / "bm25_index.pkl")
     l0_rows = np.array([row_of[cid] for cid in l0_ids])
-    hybrid = W_DENSE * minmax(dense) + W_BM25 * bm25_all[l0_rows]
+    sparse = bm25_all[l0_rows]
+    if args.fusion == "rrf":
+        hybrid = rrf_fuse(l0_ids, dense, sparse)
+    else:
+        hybrid = W_DENSE * minmax(dense) + W_BM25 * sparse
     l1 = rank_sort(list(zip(l0_ids, hybrid.tolist())))[: args.topk_l1]
     hybrid_of = dict(l1)
     timings["L1_hybrid"] = time.time() - t0

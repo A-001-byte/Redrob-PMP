@@ -338,11 +338,23 @@ def metrics():
                            for rec in feats)
 
     last_run = None
+    funnel = None
+    l5_demotions = l6_replacements = 0
     if TIMING_JSON.exists():
         with open(TIMING_JSON, encoding="utf-8") as f:
-            last_run = (json.load(f).get("timings_s") or {}).get("total")
+            timing = json.load(f)
+        last_run = (timing.get("timings_s") or {}).get("total")
+        funnel = timing.get("funnel")          # [L0, L1, L2, L3, final]
+        l5_demotions = len(timing.get("l5_demotions") or [])
+        l6_replacements = len(timing.get("l6_replacements") or [])
 
     return {
+        "funnel": {
+            "corpus": len(S.ids),
+            "stages": funnel,
+            "l5_demotions": l5_demotions,
+            "l6_replacements": l6_replacements,
+        } if funnel else None,
         "honeypot_count": sum(1 for r in feats if r.get("is_honeypot")),
         "disqualified_count": sum(1 for r in feats
                                   if r.get("disqualifier_flag")),

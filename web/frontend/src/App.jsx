@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Header from './components/Header.jsx';
 import MetricsBar from './components/MetricsBar.jsx';
+import FunnelChart from './components/FunnelChart.jsx';
 import RankingTable from './components/RankingTable.jsx';
 import CandidateDrawer from './components/CandidateDrawer.jsx';
 import UploadPanel from './components/UploadPanel.jsx';
@@ -89,6 +90,7 @@ export default function App() {
           </div>
         )}
         <MetricsBar metrics={metrics} />
+        <FunnelChart funnel={metrics?.funnel} />
         <RankingTable candidates={results.candidates} onSelect={setDrawerId} />
         <UploadPanel onSelect={setDrawerId} />
       </main>

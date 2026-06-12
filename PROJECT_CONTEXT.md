@@ -19,9 +19,9 @@ defensible **top-100 CSV**. Hard constraints from the organizers:
 - Reproducible via a single CLI command / Docker.
 
 **Our result:** top-100 with **0 honeypots, 0 disqualified, mean top-10 score
-0.9454**, ranking in **~45 s clean** (44.95 s measured; 103 s when dev servers
-were running alongside — that stale figure is what's currently in
-`submission/rank_timing.json`). Deterministic: two runs are byte-identical.
+0.9657** (was 0.9454 before the 2026-06-12 RRF fusion change), ranking in
+**~11 s clean** (11.2 s in `submission/rank_timing.json`; ~87 s under heavy
+machine load). Deterministic: two runs are byte-identical.
 
 ## 2. Current status (as of 2026-06-11)
 
@@ -59,7 +59,7 @@ the top of rank.py).
 ```
             100,000 candidates (precomputed artifacts, zero network)
    L0  FAISS IndexFlatIP dense retrieval vs JD embedding      → top 5,000
-   L1  Hybrid: 0.70·dense(minmax) + 0.30·BM25                 → top   500
+   L1  Hybrid: weighted RRF 70/30 (dense, BM25), k=60         → top   500
    L2  Cross-encoder ms-marco-MiniLM-L-6-v2 (JD, career_text) → top   200
    L3  Interpretable weighted composite score                 → top   150
    L4  LightGBM LambdaRank slot (placeholder, pass-through)   → top 100 + bench
@@ -71,9 +71,11 @@ the top of rank.py).
 Layer details (all in `pipeline/rank.py`, `main()` at line 101):
 - **L0**: FAISS exact inner-product search on L2-normalized 384-d career
   embeddings (all-MiniLM-L6-v2). ~10 ms full scan.
-- **L1**: `hybrid = 0.70·minmax(dense) + 0.30·bm25` where the BM25 query is the
-  fixed string `"production vector search FAISS embeddings ranking NDCG
-  retrieval"` (JD's distinctive lexical terms).
+- **L1**: weighted Reciprocal Rank Fusion, `0.70/(60+rank_dense) +
+  0.30/(60+rank_bm25)`, ranks tie-broken by candidate_id (deterministic).
+  `--fusion linear` restores the legacy `0.70·minmax(dense) + 0.30·bm25`
+  blend. The BM25 query is the fixed string `"production vector search FAISS
+  embeddings ranking NDCG retrieval"` (JD's distinctive lexical terms).
 - **L2**: `cross-encoder/ms-marco-MiniLM-L-6-v2`, batch 32, max_length 512,
   pairs = (JD query text from `precomputed/jd_query.txt`, career_text). Raw
   logits order L2 but never enter the composite (uncalibrated); they're saved
@@ -183,7 +185,8 @@ expected salary, etc.). `-1` conventionally means "unknown".
 pipeline/        contracts.py (FeatureRecord/TextRecord/SkillCanon TypedDicts)
                  honeypot.py, build_skill_canon.py, build_features.py,
                  build_embeddings.py, build_bm25.py, build_index.py,
-                 build_gate_data.py, scorer.py, reasoning.py,
+                 build_gate_data.py, build_all.py (one-command rebuild),
+                 scorer.py, reasoning.py,
                  rank.py (THE entry point), verify_phase2.py, verify_phase3.py
 precomputed/     ranking artifacts (see table)
 models/          HF cache: all-MiniLM-L6-v2 + ms-marco-MiniLM-L-6-v2 (~200 MB, NOT in git)
@@ -312,7 +315,7 @@ status; no gradients, no emoji icons, WCAG AA. Tokens in
 | What | Value |
 |---|---|
 | Composite weights sem/career/skill/exp/assess | 0.25 / 0.30 / 0.20 / 0.10 / 0.15 |
-| Hybrid blend dense/BM25 | 0.70 / 0.30 |
+| L1 fusion (default rrf) | weighted RRF 0.70 / 0.30, k=60 (`--fusion linear` = legacy blend) |
 | Funnel top-ks L0/L1/L2/L3/final | 5000 / 500 / 200 / 150 / 100 |
 | Consistency thresholds (cos) | >0.70 → +0.03, <0.50 → −0.03 |
 | Anchor penalty (max cos) | ≥0.55 → 0.10, ≥0.40 → 0.05 |

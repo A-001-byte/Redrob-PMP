@@ -1,0 +1,23 @@
+{
+  "timings_s": {
+    "load": 1.91,
+    "L0_faiss": 0.08,
+    "L1_hybrid": 0.26,
+    "L2_cross_encoder": 9.0,
+    "L3_composite": 0.0,
+    "L4_rerank": 0.0,
+    "L5_gate": 0.0,
+    "L6_safety": 0.0,
+    "output": 0.0,
+    "total": 11.25
+  },
+  "funnel": [
+    5000,
+    500,
+    200,
+    150,
+    100
+  ],
+  "l5_demotions": [],
+  "l6_replacements": []
+}
