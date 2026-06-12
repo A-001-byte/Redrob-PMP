@@ -188,6 +188,8 @@ pipeline/        contracts.py (FeatureRecord/TextRecord/SkillCanon TypedDicts)
                  honeypot.py, build_skill_canon.py, build_features.py,
                  build_embeddings.py, build_bm25.py, build_index.py,
                  build_gate_data.py, build_all.py (one-command rebuild),
+                 fairness_audit.py (read-only adverse-impact audit →
+                 submission/fairness_report.{md,json}),
                  scorer.py, reasoning.py,
                  rank.py (THE entry point), verify_phase2.py, verify_phase3.py
 precomputed/     ranking artifacts (see table)
@@ -285,6 +287,20 @@ deploy layout + frontmatter documented in `web/README.md` §3 (SDK streamlit,
 background `#F8FAFC`, destructive `#DC2626`; green/amber/red reserved for
 status; no gradients, no emoji icons, WCAG AA. Tokens in
 `web/frontend/tailwind.config.js` and the `C` dict in `web/streamlit_app.py`.
+
+## 10b. Fairness audit (added 2026-06-13)
+
+`pipeline/fairness_audit.py` — read-only adverse-impact analysis of the
+top-100 vs the qualified pool (≥1 matched required skill ∧ not DQ ∧ not
+honeypot; 19,110). Four proxy attributes (education tier — inverted from
+education_tier_score; location; YoE band; company-size background — from a
+candidates.jsonl scan), four-fifths impact-ratio flags, weighted-component
+decomposition for flagged groups. No protected attributes exist in the data
+and none are inferred (stated in the report). Outputs
+`submission/fairness_report.{md,json}`; served by `GET /api/fairness`,
+rendered by `web/frontend/src/components/FairnessPanel.jsx` (Overview page,
+below the funnel) and a Streamlit expander. Deterministic; never modifies
+pipeline artifacts or submission.csv.
 
 ## 11. Invariants an agent must not break
 

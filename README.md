@@ -121,6 +121,23 @@ composite = base × availability  (clamped 0.10–1.25: notice period, activity,
   model would learn to replicate our composite scorer rather than improve on
   it. The slot is a documented extension point.
 
+## Fairness & Bias Audit
+
+The repo ships an automated adverse-impact audit of the final top-100
+(`submission/fairness_report.md` + `.json`), the kind of health-check
+HR-tech ranking tools run under NYC Local Law 144 / the EU AI Act regime.
+It compares each group's selection rate out of the **qualified pool**
+(≥1 matched required skill, not disqualified, not honeypot — 19,110
+candidates) and flags any impact ratio below the four-fifths (0.80)
+threshold. Audited proxy attributes: education tier, location,
+years-of-experience band, company-size background. The dataset contains
+**no gender/age/ethnicity fields and none are inferred** — this is a
+fairness-aware engineering practice borrowing the legal methodology, not a
+compliance claim (a real LL144 audit needs an independent auditor and
+demographic data). The web UI surfaces the tables (React panel + Streamlit
+expander). Reproduce: `python pipeline/fairness_audit.py` (read-only,
+deterministic — never touches the ranking).
+
 ## Offline Pre-computation (run once)
 
 Regenerates everything in `precomputed/` from `data/candidates.jsonl` + the

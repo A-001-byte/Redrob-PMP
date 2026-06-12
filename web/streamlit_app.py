@@ -33,6 +33,7 @@ PRECOMPUTED_DIR = PROJECT_ROOT / "precomputed"
 SUBMISSION_CSV = PROJECT_ROOT / "submission" / "submission.csv"
 DETAILS_JSON = PROJECT_ROOT / "submission" / "rank_details.json"
 TIMING_JSON = PROJECT_ROOT / "submission" / "rank_timing.json"
+FAIRNESS_JSON = PROJECT_ROOT / "submission" / "fairness_report.json"
 JSONL_PATH = PROJECT_ROOT / "data" / "candidates.jsonl"
 OFFSETS_PATH = PROJECT_ROOT / "data" / "labeling_candidates.json"
 
@@ -435,6 +436,32 @@ def main():
     m5.metric("Candidates ranked", len(rows),
               delta=f"{last_run:.0f}s last run" if last_run else None,
               delta_color="off")
+
+    # --- fairness audit (read-only adverse-impact report) ---
+    with st.expander("Fairness audit — adverse impact vs the qualified pool"):
+        if not FAIRNESS_JSON.exists():
+            st.caption("Audit report not deployed on this Space — generate it "
+                       "with `python pipeline/fairness_audit.py`.")
+        else:
+            with open(FAIRNESS_JSON, encoding="utf-8") as f:
+                fair = json.load(f)
+            st.caption(fair["disclaimer"])
+            fm = fair["methodology"]
+            st.caption(f"Qualified pool: {fm['qualified_pool_count']:,} of "
+                       f"{fm['total_candidates']:,} "
+                       f"({fm['qualified_pool_definition']}). Impact ratio = "
+                       f"group selection rate / best group's rate; "
+                       f"< {fm['four_fifths_threshold']} is flagged.")
+            for attr in fair["attributes"]:
+                st.markdown(f"**{attr['attribute']}**")
+                adf = pd.DataFrame(attr["rows"])[[
+                    "group", "pool_count", "pool_share_pct", "top100_count",
+                    "selection_rate_pct", "impact_ratio", "flagged"]]
+                adf.columns = ["group", "pool n", "pool %", "top-100 n",
+                               "selection %", "impact ratio", "flag"]
+                st.dataframe(adf, hide_index=True, width="stretch")
+                for note in attr.get("notes", []):
+                    st.caption(note)
 
     # --- table + filters ---
     details = load_details(_mtime(DETAILS_JSON))
