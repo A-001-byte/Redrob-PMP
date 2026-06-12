@@ -11,6 +11,7 @@ export const getResults = () => getJson('/api/results');
 export const getMetrics = () => getJson('/api/metrics');
 export const getCandidate = (id) =>
   getJson(`/api/candidate/${encodeURIComponent(id)}`);
+export const getFairness = () => getJson('/api/fairness');
 export const exportUrl = `${BASE}/api/export`;
 
 export async function postPreview(candidateIds) {

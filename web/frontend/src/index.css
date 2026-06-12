@@ -3,7 +3,74 @@
 @tailwind utilities;
 
 body {
-  @apply bg-background font-body text-slate-700 antialiased;
+  @apply bg-background font-body text-foreground antialiased;
+}
+
+/* ── Selection ────────────────────────────────────────────────── */
+::selection {
+  background: rgba(30, 64, 175, 0.4);
+  color: #e2e8f0;
+}
+
+/* ── Scrollbar — thin, dark ───────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #030712;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1e293b #030712;
+}
+
+/* ── Glow utilities ───────────────────────────────────────────── */
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px rgba(30, 64, 175, 0.5);
+  }
+  .text-glow-amber {
+    text-shadow: 0 0 10px rgba(217, 119, 6, 0.5);
+  }
+  .text-glow-emerald {
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  }
+
+  .glass {
+    background: rgba(10, 15, 26, 0.80);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  }
+
+  .glass-strong {
+    background: rgba(10, 15, 26, 0.92);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  }
+
+  /* Card hover lift */
+  .hover-lift {
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(30, 64, 175, 0.15);
+  }
+
+  /* Progress bar glow */
+  .bar-glow {
+    box-shadow: 0 0 8px rgba(30, 64, 175, 0.5);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

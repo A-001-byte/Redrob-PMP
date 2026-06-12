@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { ArrowDown, ArrowUp, Download, Search } from 'lucide-react';
+import { ArrowDown, ArrowUp, BookmarkCheck, Download, Search } from 'lucide-react';
 import { exportUrl } from '../utils/api.js';
+import { STATUSES, exportShortlistCsv, useShortlist } from '../context/ShortlistContext.jsx';
 import {
   PART_COLORS,
   PART_LABELS,
@@ -62,13 +63,16 @@ function ScoreCell({ score }) {
   );
 }
 
-export default function RankingTable({ candidates, onSelect }) {
+export default function RankingTable({ candidates, onSelect, selected, onToggleSelect }) {
   const [sortKey, setSortKey] = useState('rank');
   const [sortAsc, setSortAsc] = useState(true);
   const [q, setQ] = useState('');
   const [loc, setLoc] = useState('All');
   const [minScore, setMinScore] = useState('');
   const [maxScore, setMaxScore] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Any');
+  const { entries } = useShortlist();
+  const taggedCount = Object.keys(entries).length;
 
   const rows = useMemo(() => {
     let out = candidates;
@@ -79,6 +83,9 @@ export default function RankingTable({ candidates, onSelect }) {
     const hi = parseFloat(maxScore);
     if (!Number.isNaN(lo)) out = out.filter((c) => c.score >= lo);
     if (!Number.isNaN(hi)) out = out.filter((c) => c.score <= hi);
+    if (statusFilter === 'Tagged') out = out.filter((c) => entries[c.candidate_id]);
+    else if (statusFilter !== 'Any')
+      out = out.filter((c) => entries[c.candidate_id]?.status === statusFilter);
 
     const value = (c) =>
       sortKey === 'rank' ? c.rank
@@ -87,7 +94,7 @@ export default function RankingTable({ candidates, onSelect }) {
     return [...out].sort((a, b) =>
       sortAsc ? value(a) - value(b) : value(b) - value(a)
     );
-  }, [candidates, q, loc, minScore, maxScore, sortKey, sortAsc]);
+  }, [candidates, q, loc, minScore, maxScore, statusFilter, entries, sortKey, sortAsc]);
 
   const toggleSort = (key) => {
     if (key === sortKey) setSortAsc((v) => !v);
@@ -98,15 +105,16 @@ export default function RankingTable({ candidates, onSelect }) {
   };
 
   const inputCls =
-    'rounded-md border border-border bg-white px-2.5 py-1.5 text-sm ' +
-    'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+    'rounded-md border border-border bg-gray-900 px-2.5 py-1.5 text-sm text-slate-200 ' +
+    'placeholder:text-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring ' +
+    'transition-colors duration-150';
 
   return (
-    <section className="rounded-lg border border-border bg-white">
+    <section className="rounded-lg border border-border bg-surface">
       {/* filter bar */}
       <div className="flex flex-wrap items-center gap-2 border-b border-border px-3 py-2.5">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-2.5 top-2 h-4 w-4 text-slate-400" />
+          <Search className="pointer-events-none absolute left-2.5 top-2 h-4 w-4 text-slate-500" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -143,15 +151,42 @@ export default function RankingTable({ candidates, onSelect }) {
             aria-label="Maximum score"
           />
         </div>
-        <span className="text-xs text-slate-400">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className={`${inputCls} cursor-pointer`}
+          aria-label="Filter by shortlist status"
+        >
+          <option value="Any">Any status</option>
+          <option value="Tagged">Tagged ({taggedCount})</option>
+          {STATUSES.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+        <span className="text-xs text-slate-500">
           {rows.length} of {candidates.length}
         </span>
+        {taggedCount > 0 && (
+          <button
+            type="button"
+            onClick={() => exportShortlistCsv(entries, candidates)}
+            className="ml-auto flex cursor-pointer items-center gap-1.5 rounded-md border
+                       border-border px-3 py-1.5 text-sm text-emerald-400 transition-colors
+                       duration-200 hover:bg-surface-hover focus:outline-none
+                       focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <BookmarkCheck className="h-4 w-4" aria-hidden="true" />
+            Shortlist ({taggedCount})
+          </button>
+        )}
         <a
           href={exportUrl}
           download="submission.csv"
           className="ml-auto flex cursor-pointer items-center gap-1.5 rounded-md border
-                     border-border px-3 py-1.5 text-sm text-primary transition-colors
-                     duration-200 hover:bg-muted focus:outline-none
+                     border-border px-3 py-1.5 text-sm text-slate-300 transition-colors
+                     duration-200 hover:bg-surface-hover hover:text-foreground focus:outline-none
                      focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Download className="h-4 w-4" aria-hidden="true" />
@@ -164,6 +199,7 @@ export default function RankingTable({ candidates, onSelect }) {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-border text-xs uppercase tracking-wide text-slate-500">
+              {onToggleSelect && <th className="w-8 pl-3" aria-label="Compare" />}
               {SORT_FIELDS.slice(0, 1).map((f) => (
                 <SortTh key={f.key} field={f} sortKey={sortKey} sortAsc={sortAsc} onSort={toggleSort} className="w-16 pl-4" />
               ))}
@@ -176,7 +212,7 @@ export default function RankingTable({ candidates, onSelect }) {
                   Parts
                   <span className="hidden gap-1 font-normal normal-case xl:flex">
                     {Object.entries(PART_COLORS).map(([k, c]) => (
-                      <span key={k} className="flex items-center gap-0.5 text-[10px] text-slate-400">
+                      <span key={k} className="flex items-center gap-0.5 text-[10px] text-slate-500">
                         <span className="h-1.5 w-1.5 rounded-sm" style={{ backgroundColor: c }} />
                         {PART_LABELS[k]}
                       </span>
@@ -192,14 +228,53 @@ export default function RankingTable({ candidates, onSelect }) {
               <tr
                 key={c.candidate_id}
                 onClick={() => onSelect(c.candidate_id)}
-                className="cursor-pointer border-b border-border/60 transition-colors
-                           duration-150 last:border-b-0 hover:bg-muted/60"
+                className="cursor-pointer border-b border-border/40 transition-colors
+                           duration-150 last:border-b-0 hover:bg-surface-hover"
               >
-                <td className="py-2 pl-4 font-heading text-slate-500">{c.rank}</td>
-                <td className="px-3 py-2 font-heading text-xs text-primary">
-                  {c.candidate_id}
+                {onToggleSelect && (
+                  <td className="py-2 pl-3" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selected?.has(c.candidate_id) ?? false}
+                      onChange={() => onToggleSelect(c.candidate_id)}
+                      aria-label={`Select ${c.candidate_id} for comparison`}
+                      className="h-3.5 w-3.5 cursor-pointer accent-blue-500"
+                    />
+                  </td>
+                )}
+                <td className="py-2 pl-4 font-heading text-slate-500">
+                  <span className="flex items-center gap-1">
+                    {c.rank}
+                    {typeof c.movement === 'number' && c.movement !== 0 && (
+                      <span
+                        className={`font-heading text-[10px] ${
+                          c.movement > 0 ? 'text-emerald-400' : 'text-red-400'
+                        }`}
+                        title={`${Math.abs(c.movement)} place${Math.abs(c.movement) === 1 ? '' : 's'} ${
+                          c.movement > 0 ? 'up' : 'down'
+                        } vs official ranking`}
+                      >
+                        {c.movement > 0 ? `▲${c.movement}` : `▼${-c.movement}`}
+                      </span>
+                    )}
+                  </span>
                 </td>
-                <td className="max-w-[16rem] truncate px-3 py-2 font-medium text-slate-700">
+                <td className="px-3 py-2 font-heading text-xs text-secondary">
+                  <span className="flex items-center gap-1.5">
+                    {entries[c.candidate_id]?.status && (
+                      <span
+                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                          STATUSES.find((s) => s.value === entries[c.candidate_id].status)?.dot ??
+                          'bg-slate-500'
+                        }`}
+                        title={entries[c.candidate_id].status}
+                        aria-hidden="true"
+                      />
+                    )}
+                    {c.candidate_id}
+                  </span>
+                </td>
+                <td className="max-w-[16rem] truncate px-3 py-2 font-medium text-slate-300">
                   {c.title || '--'}
                 </td>
                 <td className="px-3 py-2 text-slate-500">{c.location || '--'}</td>
@@ -215,8 +290,8 @@ export default function RankingTable({ candidates, onSelect }) {
                     {c.reasoning && c.reasoning.length > 80 && (
                       <span
                         className="invisible absolute bottom-full right-0 z-20 mb-1 w-80
-                                   rounded-md border border-border bg-white p-2.5 text-xs
-                                   leading-relaxed text-slate-600 opacity-0 shadow-lg
+                                   rounded-md border border-border bg-gray-900 p-2.5 text-xs
+                                   leading-relaxed text-slate-300 opacity-0 shadow-lg
                                    transition-opacity duration-200 group-hover:visible
                                    group-hover:opacity-100"
                       >
@@ -229,7 +304,10 @@ export default function RankingTable({ candidates, onSelect }) {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-sm text-slate-400">
+                <td
+                  colSpan={onToggleSelect ? 8 : 7}
+                  className="px-4 py-10 text-center text-sm text-slate-500"
+                >
                   {candidates.length === 0
                     ? 'No submission yet — click Re-rank to run the pipeline.'
                     : 'No candidates match the current filters.'}
@@ -251,8 +329,8 @@ export default function RankingTable({ candidates, onSelect }) {
             className={`cursor-pointer rounded-full border px-2.5 py-0.5 transition-colors duration-150
                         focus:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                           sortKey === f.key
-                            ? 'border-primary bg-primary text-on-primary'
-                            : 'border-border hover:bg-muted'
+                            ? 'border-primary bg-primary text-on-primary shadow-glow-sm'
+                            : 'border-border text-slate-400 hover:bg-surface-hover hover:text-slate-300'
                         }`}
           >
             {f.label}
@@ -273,7 +351,7 @@ function SortTh({ field, sortKey, sortAsc, onSort, className = '' }) {
         type="button"
         onClick={() => onSort(field.key)}
         className="flex cursor-pointer items-center gap-1 uppercase tracking-wide
-                   transition-colors duration-150 hover:text-primary focus:outline-none
+                   transition-colors duration-150 hover:text-secondary focus:outline-none
                    focus-visible:ring-2 focus-visible:ring-ring"
       >
         {field.label}

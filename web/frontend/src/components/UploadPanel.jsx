@@ -42,24 +42,24 @@ export default function UploadPanel({ onSelect }) {
   };
 
   return (
-    <section className="rounded-lg border border-border bg-white">
+    <section className="rounded-lg border border-border bg-surface">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         className="flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left
-                   transition-colors duration-150 hover:bg-muted/50
+                   transition-colors duration-150 hover:bg-surface-hover
                    focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <FileUp className="h-4 w-4 text-secondary" aria-hidden="true" />
         <span className="font-heading text-sm font-semibold text-foreground">
           Preview a custom candidate list
         </span>
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-slate-500">
           scoring-only run on up to {MAX_IDS} IDs — for organizer verification
         </span>
         <ChevronDown
-          className={`ml-auto h-4 w-4 text-slate-400 transition-transform duration-200 ${
+          className={`ml-auto h-4 w-4 text-slate-500 transition-transform duration-200 ${
             open ? 'rotate-180' : ''
           }`}
           aria-hidden="true"
@@ -75,16 +75,17 @@ export default function UploadPanel({ onSelect }) {
                 onChange={(e) => setText(e.target.value)}
                 rows={4}
                 placeholder={'Paste candidate IDs (one per line or comma-separated)\nCAND_0046525, CAND_0081846…'}
-                className="w-full rounded-md border border-border bg-white px-3 py-2
-                           font-heading text-xs focus:outline-none focus-visible:ring-2
-                           focus-visible:ring-ring"
+                className="w-full rounded-md border border-border bg-gray-900 px-3 py-2
+                           font-heading text-xs text-slate-200 placeholder:text-slate-600
+                           focus:outline-none focus-visible:ring-2
+                           focus-visible:ring-ring transition-colors duration-150"
               />
               <div className="mt-1.5 flex items-center gap-3 text-xs text-slate-500">
                 <span>{ids.length} valid ID{ids.length === 1 ? '' : 's'} detected</span>
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="cursor-pointer text-primary underline-offset-2 transition-colors
+                  className="cursor-pointer text-secondary underline-offset-2 transition-colors
                              duration-150 hover:underline focus:outline-none
                              focus-visible:ring-2 focus-visible:ring-ring"
                 >
@@ -103,16 +104,16 @@ export default function UploadPanel({ onSelect }) {
                   disabled={!ids.length || busy}
                   className="ml-auto flex cursor-pointer items-center gap-1.5 rounded-md
                              bg-primary px-3.5 py-1.5 text-sm font-medium text-on-primary
-                             transition-colors duration-200 hover:bg-blue-900
+                             transition-all duration-200 hover:bg-blue-800 hover:shadow-glow
                              focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
-                             focus-visible:ring-offset-2 disabled:cursor-not-allowed
-                             disabled:opacity-50"
+                             focus-visible:ring-offset-2 focus-visible:ring-offset-background
+                             disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
                   Score subset
                 </button>
               </div>
-              {error && <div className="mt-2 text-xs text-destructive">{error}</div>}
+              {error && <div className="mt-2 text-xs text-red-400">{error}</div>}
             </div>
           </div>
 
@@ -123,7 +124,7 @@ export default function UploadPanel({ onSelect }) {
                   {result.total_scored} scored
                 </span>
                 {result.unknown_ids.length > 0 && (
-                  <span className="text-destructive">
+                  <span className="text-red-400">
                     {result.unknown_ids.length} unknown: {result.unknown_ids.join(', ')}
                   </span>
                 )}
@@ -145,14 +146,14 @@ export default function UploadPanel({ onSelect }) {
                       <tr
                         key={r.candidate_id}
                         onClick={() => onSelect(r.candidate_id)}
-                        className="cursor-pointer border-t border-border/60 transition-colors
-                                   duration-150 hover:bg-muted/60"
+                        className="cursor-pointer border-t border-border/40 transition-colors
+                                   duration-150 hover:bg-surface-hover"
                       >
                         <td className="px-3 py-1.5 font-heading text-slate-500">{r.rank}</td>
-                        <td className="px-3 py-1.5 font-heading text-xs text-primary">
+                        <td className="px-3 py-1.5 font-heading text-xs text-secondary">
                           {r.candidate_id}
                         </td>
-                        <td className="max-w-[14rem] truncate px-3 py-1.5">{r.title || '--'}</td>
+                        <td className="max-w-[14rem] truncate px-3 py-1.5 text-slate-300">{r.title || '--'}</td>
                         <td className="px-3 py-1.5 text-slate-500">{r.location || '--'}</td>
                         <td className="px-3 py-1.5">
                           <div className="flex items-center gap-2">

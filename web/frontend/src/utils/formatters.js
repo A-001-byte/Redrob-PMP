@@ -1,5 +1,6 @@
 /** Score color bands from the design brief: green > 0.8, yellow 0.6–0.8,
- *  orange < 0.6 (status colors only — never decorative). */
+ *  orange < 0.6 (status colors only — never decorative).
+ *  Adjusted for dark OLED backgrounds. */
 export function scoreColor(score) {
   if (score > 0.8) return 'bg-emerald-500';
   if (score >= 0.6) return 'bg-yellow-500';
@@ -7,9 +8,9 @@ export function scoreColor(score) {
 }
 
 export function scoreTextColor(score) {
-  if (score > 0.8) return 'text-emerald-600';
-  if (score >= 0.6) return 'text-yellow-600';
-  return 'text-orange-600';
+  if (score > 0.8) return 'text-emerald-400';
+  if (score >= 0.6) return 'text-yellow-400';
+  return 'text-orange-400';
 }
 
 const MAX_SCORE = 1.1; // composites top out around 1.07 (1.25 availability cap)
@@ -51,14 +52,15 @@ export function locationBucket(row) {
   return 'International';
 }
 
-/** Stacked sparkbar palette — blue data ramp + amber for assessment,
- *  straight from the design system (primary/secondary + accent). */
+/** Stacked sparkbar palette — blue data ramp + amber for assessment.
+ *  Lightened for the dark theme: every swatch reads ≥3:1 against surface
+ *  (#0A0F1A); the old #1E40AF primary vanished on dark backgrounds. */
 export const PART_COLORS = {
-  semantic: '#1E40AF',
-  career: '#3B82F6',
-  skill: '#60A5FA',
-  experience: '#93C5FD',
-  assessment: '#D97706',
+  semantic: '#93C5FD',
+  career: '#60A5FA',
+  skill: '#3B82F6',
+  experience: '#818CF8',
+  assessment: '#FBBF24',
 };
 
 export const PART_LABELS = {

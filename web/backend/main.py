@@ -191,6 +191,9 @@ def candidate_summary_fields(cid: str) -> dict:
         "availability_multiplier": rec.get("availability_multiplier"),
         "disqualifier_flag": bool(rec.get("disqualifier_flag", False)),
         "is_honeypot": bool(rec.get("is_honeypot", False)),
+        # JD skill evidence for the frontend coverage views (small lists).
+        "matched_required_skills": rec.get("matched_required_skills") or [],
+        "matched_nicetohave_skills": rec.get("matched_nicetohave_skills") or [],
     }
 
 
@@ -371,6 +374,19 @@ def metrics():
         "last_run_time_seconds": last_run,
         "generated_at": generated_at(),
     }
+
+
+@app.get("/api/fairness")
+def fairness():
+    """Adverse-impact audit JSON (read fresh so a re-generated report shows
+    without a server restart)."""
+    path = SUBMISSION_DIR / "fairness_report.json"
+    if not path.exists():
+        raise HTTPException(
+            404, "fairness report not generated — run "
+                 "`python pipeline/fairness_audit.py` first")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
 
 
 @app.get("/api/export")
