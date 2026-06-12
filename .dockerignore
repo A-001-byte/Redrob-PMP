@@ -1,0 +1,13 @@
+.git/
+.claude/
+web/
+data/
+docs/
+submission/submission.csv
+submission/rank_timing.json
+submission/rank_details.json
+__pycache__/
+*.pyc
+docker_build.log
+Dockerfile
+.dockerignore
