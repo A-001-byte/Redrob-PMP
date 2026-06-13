@@ -51,22 +51,25 @@ from build_bm25 import ids_hash, load_index as load_bm25, score_query
 from build_index import search
 from build_skill_canon import MODEL_CACHE_DIR, PRECOMPUTED_DIR, PROJECT_ROOT
 from reasoning import generate_reasoning
+from config_loader import CONFIG
 from scorer import (assessment_gate_violations, composite_score,
                     consistency_adjustment, negative_anchor_penalty)
 
+_PC = CONFIG["pipeline"]
+
 CROSS_ENCODER_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
-CE_BATCH_SIZE = 32
-CE_MAX_LENGTH = 512
+CE_BATCH_SIZE = _PC["ce_batch_size"]
+CE_MAX_LENGTH = _PC["ce_max_length"]
 
 # Sparse-channel query: the JD's distinctive lexical terms. Validated in
 # Phase 2 (BM25 top-10 all skill/domain-relevant; hybrid preview promoted
 # candidates with explicit FAISS/NDCG/retrieval language).
 BM25_QUERY = "production vector search FAISS embeddings ranking NDCG retrieval"
-W_DENSE, W_BM25 = 0.70, 0.30
-RRF_K = 60   # standard reciprocal-rank-fusion constant (Cormack et al.)
+W_DENSE, W_BM25 = _PC["rrf_dense_weight"], _PC["rrf_bm25_weight"]
+RRF_K = _PC["rrf_k"]
 
-FINAL_K = 100          # submission size
-GATE_TOP_N = 20        # L5 applies to ranks 1..20
+FINAL_K = _PC["topk_final"]
+GATE_TOP_N = _PC["gate_top_n"]
 SCORE_DECIMALS = 4
 
 # L4 placeholder: the LightGBM LambdaRank model is trained in a later phase
@@ -124,10 +127,10 @@ def main() -> None:
     parser.add_argument("--precomputed", default=str(PRECOMPUTED_DIR))
     parser.add_argument("--out",
                         default=str(PROJECT_ROOT / "submission" / "submission.csv"))
-    parser.add_argument("--topk-l0", type=int, default=5000)
-    parser.add_argument("--topk-l1", type=int, default=500)
-    parser.add_argument("--topk-l2", type=int, default=200)
-    parser.add_argument("--topk-l3", type=int, default=150)
+    parser.add_argument("--topk-l0", type=int, default=_PC["topk_l0"])
+    parser.add_argument("--topk-l1", type=int, default=_PC["topk_l1"])
+    parser.add_argument("--topk-l2", type=int, default=_PC["topk_l2"])
+    parser.add_argument("--topk-l3", type=int, default=_PC["topk_l3"])
     parser.add_argument("--fusion", choices=["rrf", "linear"], default="rrf",
                         help="L1 dense+sparse fusion: weighted RRF (default) "
                              "or the legacy 0.70*minmax(dense)+0.30*bm25 blend")

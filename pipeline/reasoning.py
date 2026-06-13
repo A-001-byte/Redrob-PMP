@@ -22,22 +22,26 @@ from __future__ import annotations
 import hashlib
 import re
 
+from config_loader import CONFIG
+
+_RC = CONFIG["reasoning"]
+
 # Score parts eligible as "strengths", in parts_dict (weights applied).
 _BLEND_PARTS = ("semantic", "career", "skill", "experience", "assessment")
 
 # Concern triggers on raw signals (checked before falling back to the
 # weakest blend part). Thresholds are deliberately conservative so a
 # concern is only voiced when the negative is unambiguous.
-_NOTICE_CONCERN_DAYS = 60
-_INACTIVE_CONCERN_DAYS = 60
-_LOW_LOCATION_FIT = 0.5
+_NOTICE_CONCERN_DAYS = _RC["notice_concern_days"]
+_INACTIVE_CONCERN_DAYS = _RC["inactive_concern_days"]
+_LOW_LOCATION_FIT = _RC["low_location_fit"]
 
-_CONCERN_RANK_FROM = 31     # bands "balanced" and "candid" voice a concern
+_CONCERN_RANK_FROM = _RC["concern_rank_from"]
 
 _TONE_BANDS = (             # (max_rank, band_name)
-    (10, "confident"),
-    (30, "positive"),
-    (70, "balanced"),
+    (_RC["band_confident_max"], "confident"),
+    (_RC["band_positive_max"], "positive"),
+    (_RC["band_balanced_max"], "balanced"),
     (10**9, "candid"),
 )
 

@@ -33,6 +33,7 @@ from build_skill_canon import (
     REQUIRED_SKILLS,
     iter_candidates,
 )
+from config_loader import CONFIG
 from honeypot import is_honeypot
 
 # ---------------------------------------------------------------------------
@@ -101,8 +102,11 @@ _SENIORITY = [
     (re.compile(r"senior|\bsr\.?\b", re.I), 3),
 ]
 
-PROFICIENCY_MULT = {"expert": 1.0, "advanced": 0.8,
-                    "intermediate": 0.5, "beginner": 0.2}
+_SKC = CONFIG["skill_score"]
+PROFICIENCY_MULT = {"expert": _SKC["proficiency_expert"],
+                    "advanced": _SKC["proficiency_advanced"],
+                    "intermediate": _SKC["proficiency_intermediate"],
+                    "beginner": _SKC["proficiency_beginner"]}
 
 CITY_TIER1_RE = re.compile(
     r"bengaluru|bangalore|mumbai|delhi|gurgaon|gurugram|hyderabad"
@@ -113,8 +117,10 @@ STEM_FIELD_RE = re.compile(
     r"|math|statistic|data science|artificial intelligence"
     r"|machine learning", re.I)
 
-TIER_SCORE = {"tier_1": 1.0, "tier_2": 0.8, "tier_3": 0.6,
-              "tier_4": 0.4, "unknown": 0.4}
+_EXC = CONFIG["experience_score"]
+TIER_SCORE = {"tier_1": _EXC["edu_tier1"], "tier_2": _EXC["edu_tier2"],
+              "tier_3": _EXC["edu_tier3"], "tier_4": _EXC["edu_tier4"],
+              "unknown": _EXC["edu_unknown"]}
 
 
 # ---------------------------------------------------------------------------
@@ -182,32 +188,34 @@ def _is_it_services(role: dict) -> bool:
 
 def company_type_score(roles: list[dict], profile: dict) -> float:
     """Product/startup/scale-up = 1.0, mixed career = 0.5, all-services = 0.1."""
+    _CC = CONFIG["career_score"]
     if not roles:
         # Fall back to the current employer from the profile.
         pseudo = {"company": profile.get("current_company"),
                   "industry": profile.get("current_industry")}
         if _str(pseudo["company"]) or _str(pseudo["industry"]):
-            return 0.1 if _is_it_services(pseudo) else 1.0
-        return 0.5  # no signal
+            return _CC["score_it_services"] if _is_it_services(pseudo) else _CC["score_product_company"]
+        return _CC["score_mixed_company"]  # no signal
     services = sum(1 for r in roles if _is_it_services(r))
     if services == 0:
-        return 1.0
+        return _CC["score_product_company"]
     if services == len(roles):
-        return 0.1
-    return 0.5
+        return _CC["score_it_services"]
+    return _CC["score_mixed_company"]
 
 
 def _title_base_score(title: str) -> float:
     """Pure title bucket, no description context (used by trajectory too)."""
+    _CC = CONFIG["career_score"]
     if not title:
-        return 0.3
+        return _CC["score_unknown_role"]
     if ML_TITLE_RE.search(title):
-        return 1.0
+        return _CC["score_ml_ai_role"]
     if NONTECH_TITLE_RE.search(title):
-        return 0.05
+        return _CC["score_nontech_role"]
     if TECH_TITLE_RE.search(title):
-        return 0.5
-    return 0.3
+        return _CC["score_tech_adjacent_role"]
+    return _CC["score_unknown_role"]
 
 
 def role_relevance_score(profile: dict, roles: list[dict]) -> float:
@@ -217,32 +225,34 @@ def role_relevance_score(profile: dict, roles: list[dict]) -> float:
     descriptions show actual ML exposure; otherwise they drop to 0.3.
     """
     has_ml_exposure = bool(ML_EXPOSURE_RE.search(_all_descriptions(roles)))
+    _CC = CONFIG["career_score"]
 
     titles = [_str(profile.get("current_title"))]
     for role in _roles_recent_first(roles)[:2]:
         titles.append(_str(role.get("title")))
     titles = [t for t in titles if t][:3]
     if not titles:
-        return 0.3
+        return _CC["score_unknown_role"]
 
     weights = [0.5, 0.3, 0.2][: len(titles)]
     total_w = sum(weights)
     score = 0.0
     for title, w in zip(titles, weights):
         base = _title_base_score(title)
-        if base == 0.5 and not has_ml_exposure:
-            base = 0.3
+        if base == _CC["score_tech_adjacent_role"] and not has_ml_exposure:
+            base = _CC["score_tech_adjacent_no_ml"]
         score += base * w
     return _clamp(score / total_w)
 
 
 def tenure_stability(roles: list[dict]) -> float:
-    """1 - fraction of roles shorter than 18 months (known durations only)."""
+    """1 - fraction of roles shorter than short_tenure_months (known durations only)."""
+    _CC = CONFIG["career_score"]
     durations = [m for r in roles
                  if (m := _num(r.get("duration_months"))) is not None and m >= 0]
     if not durations:
         return 0.5  # no signal
-    short = sum(1 for m in durations if m < 18)
+    short = sum(1 for m in durations if m < _CC["short_tenure_months"])
     return _clamp(1.0 - short / len(durations))
 
 
@@ -259,21 +269,23 @@ def build_skill_lookup(canon: dict[str, list[str]]) -> dict[str, list[str]]:
 
 
 def _duration_mult(months: float | None) -> float:
+    _SKC = CONFIG["skill_score"]
     if months is None:
-        return 0.1  # unverifiable claim scores as the lowest bracket
-    if months >= 48:
+        return _SKC["duration_none"]
+    if months >= _SKC["duration_senior"]:
         return 1.0
-    if months >= 24:
+    if months >= _SKC["duration_experienced"]:
         return 0.8
-    if months >= 12:
+    if months >= _SKC["duration_mid"]:
         return 0.6
-    if months >= 6:
+    if months >= _SKC["duration_junior"]:
         return 0.4
-    return 0.1
+    return _SKC["duration_none"]
 
 
-# Perfect candidate: every JD skill matched at expert with >= 48 months.
-MAX_SKILL_SUM = len(REQUIRED_SKILLS) * 1.0 + len(NICETOHAVE_SKILLS) * 0.4
+# Perfect candidate: every JD skill matched at expert with >= duration_senior months.
+_SKC_W = CONFIG["skill_score"]
+MAX_SKILL_SUM = len(REQUIRED_SKILLS) * _SKC_W["weight_required"] + len(NICETOHAVE_SKILLS) * _SKC_W["weight_nicetohave"]
 REQUIRED_SET = set(REQUIRED_SKILLS)
 
 
@@ -295,7 +307,7 @@ def skill_score(
         prof_mult = PROFICIENCY_MULT.get(skill.get("proficiency"), 0.2)
         dur_mult = _duration_mult(_num(skill.get("duration_months")))
         for jd_skill in lookup[name]:
-            base = 1.0 if jd_skill in REQUIRED_SET else 0.4
+            base = _SKC_W["weight_required"] if jd_skill in REQUIRED_SET else _SKC_W["weight_nicetohave"]
             value = base * prof_mult * dur_mult
             if value > best.get(jd_skill, 0.0):
                 best[jd_skill] = value
@@ -310,32 +322,35 @@ def skill_score(
 # Experience score
 # ---------------------------------------------------------------------------
 def yoe_fit(yoe: float | None) -> float:
+    _EXC = CONFIG["experience_score"]
     if yoe is None:
-        return 0.2
-    if 5 <= yoe <= 9:
-        return 1.0
+        return _EXC["yoe_fit_far"]
+    if _EXC["yoe_target_min"] <= yoe <= _EXC["yoe_target_max"]:
+        return _EXC["yoe_fit_target"]
     if yoe in (4, 10):
-        return 0.7
+        return _EXC["yoe_fit_adjacent"]
     if yoe == 3 or 11 <= yoe <= 13:
-        return 0.4
-    return 0.2
+        return _EXC["yoe_fit_outer"]
+    return _EXC["yoe_fit_far"]
 
 
 def location_fit(profile: dict, signals: dict) -> float:
+    _EXC = CONFIG["experience_score"]
     location = _str(profile.get("location")).lower()
     country = _str(profile.get("country")).lower()
     if "pune" in location or "noida" in location:
-        return 1.0
+        return _EXC["location_fit_target"]
     if CITY_TIER1_RE.search(location):
-        return 0.8
+        return _EXC["location_fit_tier1_india"]
     in_india = country == "india" or "india" in location
     if in_india:
-        return 0.65 if signals.get("willing_to_relocate") is True else 0.3
-    return 0.2
+        return _EXC["location_fit_india_relocate"] if signals.get("willing_to_relocate") is True else _EXC["location_fit_india"]
+    return _EXC["location_fit_international"]
 
 
 def education_tier_score(education: Any) -> float:
-    """Best education entry: tier base + 0.1 STEM-field bonus, capped at 1.0."""
+    """Best education entry: tier base + STEM-field bonus, capped."""
+    _EXC = CONFIG["experience_score"]
     if not isinstance(education, list):
         return TIER_SCORE["unknown"]
     best = None
@@ -344,7 +359,7 @@ def education_tier_score(education: Any) -> float:
             continue
         score = TIER_SCORE.get(entry.get("tier"), TIER_SCORE["unknown"])
         if STEM_FIELD_RE.search(_str(entry.get("field_of_study"))):
-            score = min(score + 0.1, 1.0)
+            score = min(score + _EXC["edu_stem_bonus"], _EXC["edu_stem_cap"])
         best = score if best is None else max(best, score)
     return best if best is not None else TIER_SCORE["unknown"]
 
@@ -371,8 +386,9 @@ def assessment_score(signals: dict, required_names: set[str]) -> float:
 # Trajectory
 # ---------------------------------------------------------------------------
 def trajectory_adjustment(roles: list[dict]) -> float:
-    """+0.05 if the last 2 roles are clearly more ML-relevant than older ones,
-    -0.05 if clearly less, else 0. Needs >= 3 roles to have a baseline."""
+    """+bonus if the last 2 roles are clearly more ML-relevant than older ones,
+    penalty if clearly less, else 0. Needs >= 3 roles to have a baseline."""
+    _CC = CONFIG["career_score"]
     ordered = _roles_recent_first(roles)
     if len(ordered) < 3:
         return 0.0
@@ -380,10 +396,10 @@ def trajectory_adjustment(roles: list[dict]) -> float:
     recent = sum(scores[:2]) / 2
     older = sum(scores[2:]) / len(scores[2:])
     delta = recent - older
-    if delta > 0.10:
-        return 0.05
-    if delta < -0.10:
-        return -0.05
+    if delta > _CC["trajectory_delta_threshold"]:
+        return _CC["trajectory_bonus"]
+    if delta < -_CC["trajectory_delta_threshold"]:
+        return _CC["trajectory_penalty"]
     return 0.0
 
 
@@ -399,52 +415,53 @@ def days_inactive(signals: dict, ref_date: date) -> int:
 
 
 def availability_multiplier(signals: dict, inactive_days: int) -> float:
+    _AV = CONFIG["availability_multiplier"]
     mult = 1.0
 
     if inactive_days >= 0:  # -1 = unknown = no adjustment
-        if inactive_days < 14:
-            mult += 0.15
-        elif inactive_days <= 30:
-            mult += 0.10
-        elif inactive_days <= 90:
+        if inactive_days < _AV["recency_very_active_days"]:
+            mult += _AV["recency_very_active_bonus"]
+        elif inactive_days <= _AV["recency_active_days"]:
+            mult += _AV["recency_active_bonus"]
+        elif inactive_days <= _AV["recency_stale_days"]:
             pass
-        elif inactive_days <= 180:
-            mult -= 0.10
+        elif inactive_days <= _AV["recency_very_stale_days"]:
+            mult += _AV["recency_stale_penalty"]
         else:
-            mult -= 0.25
+            mult += _AV["recency_very_stale_penalty"]
 
     rate = _num(signals.get("recruiter_response_rate"))
     if rate is not None:
-        if rate > 0.70:
-            mult += 0.10
-        elif rate >= 0.40:
+        if rate > _AV["response_high_threshold"]:
+            mult += _AV["response_high_bonus"]
+        elif rate >= _AV["response_low_threshold"]:
             pass
-        elif rate >= 0.20:
-            mult -= 0.05
+        elif rate >= _AV["response_very_low_threshold"]:
+            mult += _AV["response_low_penalty"]
         else:
-            mult -= 0.15
+            mult += _AV["response_very_low_penalty"]
 
     if signals.get("open_to_work_flag") is True:
-        mult += 0.05
-    if (_num(signals.get("applications_submitted_30d")) or 0) > 3:
-        mult += 0.05
-    if (_num(signals.get("github_activity_score")) or -1) > 60:
-        mult += 0.05
-    if (_num(signals.get("saved_by_recruiters_30d")) or 0) > 5:
-        mult += 0.05
+        mult += _AV["open_to_work_bonus"]
+    if (_num(signals.get("applications_submitted_30d")) or 0) > _AV["applications_30d_threshold"]:
+        mult += _AV["applications_bonus"]
+    if (_num(signals.get("github_activity_score")) or -1) > _AV["github_score_threshold"]:
+        mult += _AV["github_bonus"]
+    if (_num(signals.get("saved_by_recruiters_30d")) or 0) > _AV["saved_recruiters_threshold"]:
+        mult += _AV["saved_bonus"]
 
     notice = _num(signals.get("notice_period_days"))
     if notice is not None:
-        if notice <= 30:
+        if notice <= _AV["notice_short_days"]:
             pass
-        elif notice <= 60:
-            mult -= 0.03
-        elif notice <= 90:
-            mult -= 0.07
+        elif notice <= _AV["notice_mid_days"]:
+            mult += _AV["notice_mid_penalty"]
+        elif notice <= _AV["notice_long_days"]:
+            mult += _AV["notice_long_penalty"]
         else:
-            mult -= 0.12
+            mult += _AV["notice_very_long_penalty"]
 
-    return _clamp(mult, 0.10, 1.25)
+    return _clamp(mult, _AV["multiplier_min"], _AV["multiplier_max"])
 
 
 # ---------------------------------------------------------------------------
@@ -550,8 +567,11 @@ def compute_features(
     production = 1.0 if PRODUCTION_RE.search(descriptions) else 0.0
     domain = 1.0 if DOMAIN_RE.search(descriptions) else 0.0
     tenure = tenure_stability(roles)
-    career = _clamp(0.40 * company_type + 0.30 * role_rel
-                    + 0.10 * production + 0.10 * domain + 0.10 * tenure)
+    _CC = CONFIG["career_score"]
+    _EXC = CONFIG["experience_score"]
+    career = _clamp(_CC["w_company_type"] * company_type + _CC["w_role_relevance"] * role_rel
+                    + _CC["w_production_signal"] * production + _CC["w_domain_indicator"] * domain
+                    + _CC["w_tenure_stability"] * tenure)
 
     # skills
     s_score, matched_req, matched_nth = skill_score(skills, lookup)
@@ -561,7 +581,7 @@ def compute_features(
     y_fit = yoe_fit(yoe)
     l_fit = location_fit(profile, signals)
     e_tier = education_tier_score(candidate.get("education"))
-    experience = _clamp(0.40 * y_fit + 0.35 * l_fit + 0.25 * e_tier)
+    experience = _clamp(_EXC["w_yoe_fit"] * y_fit + _EXC["w_location_fit"] * l_fit + _EXC["w_education_tier"] * e_tier)
 
     # behavioral
     inactive = days_inactive(signals, ref_date)

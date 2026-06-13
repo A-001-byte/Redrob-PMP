@@ -1,0 +1,194 @@
+# Redrob Ranker — centralized configuration
+# All weights, thresholds, and tunable parameters in one place.
+# Change a value here; the pipeline picks it up on next run.
+# Units and valid ranges are noted inline.
+
+pipeline:
+  # Layer funnel sizes (defaults for CLI args)
+  topk_l0: 5000        # FAISS retrieval pool
+  topk_l1: 500         # after hybrid re-score
+  topk_l2: 200         # after cross-encoder
+  topk_l3: 150         # after composite scoring
+  topk_final: 100      # final output
+  gate_top_n: 20       # L5 assessment gate applies to ranks 1..N
+
+  # L1 hybrid fusion weights (must sum to 1.0)
+  rrf_dense_weight: 0.70
+  rrf_bm25_weight: 0.30
+  rrf_k: 60            # RRF constant (Cormack et al.)
+
+  # L2 cross-encoder
+  ce_batch_size: 32
+  ce_max_length: 512
+
+scoring:
+  # L3 composite weights (must sum to 1.0)
+  w_semantic: 0.25
+  w_career: 0.30
+  w_skill: 0.20
+  w_experience: 0.10
+  w_assessment: 0.15
+
+  # Consistency adjustment: summary vs career embedding agreement
+  consistency_bonus: 0.03        # awarded when cosine > consistency_high_threshold
+  consistency_high_threshold: 0.70
+  consistency_low_threshold: 0.50
+  min_summary_chars: 20          # below this, summary carries no signal
+
+  # Negative anchor penalty: proximity to anti-fit archetypes
+  anchor_penalty_hard: 0.10      # max cosine >= anchor_hard_threshold
+  anchor_penalty_soft: 0.05      # max cosine >= anchor_soft_threshold
+  anchor_hard_threshold: 0.55
+  anchor_soft_threshold: 0.40
+
+  # Hard multipliers
+  disqualifier_multiplier: 0.05  # crushed but still ordered
+  honeypot_multiplier: 0.0       # eliminated outright
+
+career_score:
+  # Sub-component weights (must sum to 1.0)
+  w_company_type: 0.40
+  w_role_relevance: 0.30
+  w_production_signal: 0.10
+  w_domain_indicator: 0.10
+  w_tenure_stability: 0.10
+
+  # Company type scores
+  score_product_company: 1.0
+  score_mixed_company: 0.5
+  score_it_services: 0.1
+
+  # Role relevance scores
+  score_ml_ai_role: 1.0
+  score_tech_adjacent_role: 0.5
+  score_tech_adjacent_no_ml: 0.3
+  score_nontech_role: 0.05
+  score_unknown_role: 0.3
+
+  # Tenure threshold (months)
+  short_tenure_months: 18
+
+  # Trajectory adjustment
+  trajectory_bonus: 0.05
+  trajectory_penalty: -0.05
+  trajectory_delta_threshold: 0.10
+
+skill_score:
+  # Proficiency multipliers
+  proficiency_expert: 1.0
+  proficiency_advanced: 0.8
+  proficiency_intermediate: 0.5
+  proficiency_beginner: 0.2
+
+  # Duration multipliers (months thresholds)
+  duration_senior: 48        # >= this -> 1.0
+  duration_experienced: 24   # >= this -> 0.8
+  duration_mid: 12           # >= this -> 0.6
+  duration_junior: 6         # >= this -> 0.4
+  duration_none: 0.1         # < junior or unknown
+
+  # Skill base weights
+  weight_required: 1.0
+  weight_nicetohave: 0.4
+
+experience_score:
+  # Sub-component weights (must sum to 1.0)
+  w_yoe_fit: 0.40
+  w_location_fit: 0.35
+  w_education_tier: 0.25
+
+  # YoE fit table
+  yoe_target_min: 5
+  yoe_target_max: 9
+  yoe_fit_target: 1.0       # 5-9 years
+  yoe_fit_adjacent: 0.7     # 4 or 10 years
+  yoe_fit_outer: 0.4        # 3 or 11-13 years
+  yoe_fit_far: 0.2          # everything else / unknown
+
+  # Location fit scores
+  location_fit_target: 1.0        # Pune/Noida
+  location_fit_tier1_india: 0.8   # Bangalore, Mumbai, Delhi, etc.
+  location_fit_india_relocate: 0.65  # other India + willing to relocate
+  location_fit_india: 0.3         # other India
+  location_fit_international: 0.2
+
+  # Education tier scores
+  edu_tier1: 1.0
+  edu_tier2: 0.8
+  edu_tier3: 0.6
+  edu_tier4: 0.4
+  edu_unknown: 0.4
+  edu_stem_bonus: 0.1
+  edu_stem_cap: 1.0
+
+availability_multiplier:
+  # Recency adjustments (days inactive)
+  recency_very_active_days: 14
+  recency_active_days: 30
+  recency_stale_days: 90
+  recency_very_stale_days: 180
+  recency_very_active_bonus: 0.15
+  recency_active_bonus: 0.10
+  recency_stale_penalty: -0.10
+  recency_very_stale_penalty: -0.25
+
+  # Response rate adjustments
+  response_high_threshold: 0.70
+  response_low_threshold: 0.40
+  response_very_low_threshold: 0.20
+  response_high_bonus: 0.10
+  response_low_penalty: -0.05
+  response_very_low_penalty: -0.15
+
+  # Engagement bonuses
+  open_to_work_bonus: 0.05
+  applications_30d_threshold: 3
+  applications_bonus: 0.05
+  github_score_threshold: 60
+  github_bonus: 0.05
+  saved_recruiters_threshold: 5
+  saved_bonus: 0.05
+
+  # Notice period penalties (days)
+  notice_short_days: 30
+  notice_mid_days: 60
+  notice_long_days: 90
+  notice_mid_penalty: -0.03
+  notice_long_penalty: -0.07
+  notice_very_long_penalty: -0.12
+
+  # Clamp bounds
+  multiplier_min: 0.10
+  multiplier_max: 1.25
+
+honeypot:
+  # Check 1: expert skill with near-zero usage
+  expert_min_duration_months: 3
+
+  # Check 2: YoE inflation (allow this fraction of gap)
+  yoe_gap_tolerance: 0.35
+
+  # Check 3: assessment contradiction
+  expert_assessment_min: 25
+
+  # Check 4: impossible timeline overlap
+  overlap_months_threshold: 6.0
+
+assessment_gate:
+  # L5: minimum assessment score for expert claim on a required skill
+  min_score_for_expert: 40.0
+
+reasoning:
+  # Rank band cutoffs for tone selection
+  band_confident_max: 10      # ranks 1-10: confident tone
+  band_positive_max: 30       # ranks 11-30: positive tone
+  band_balanced_max: 70       # ranks 31-70: balanced tone
+                               # ranks 71+: candid tone
+
+  # Concern clause fires from this rank onward
+  concern_rank_from: 31
+
+  # Concern trigger thresholds
+  notice_concern_days: 60
+  inactive_concern_days: 60
+  low_location_fit: 0.5

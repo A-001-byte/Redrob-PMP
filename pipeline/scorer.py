@@ -25,31 +25,35 @@ from __future__ import annotations
 
 import numpy as np
 
+from config_loader import CONFIG
+
+_SC = CONFIG["scoring"]
+
 # --- composite weights (sum of the five blend weights = 1.0) ---
-W_SEMANTIC = 0.25
-W_CAREER = 0.30
-W_SKILL = 0.20
-W_EXPERIENCE = 0.10
-W_ASSESSMENT = 0.15
+W_SEMANTIC = _SC["w_semantic"]
+W_CAREER = _SC["w_career"]
+W_SKILL = _SC["w_skill"]
+W_EXPERIENCE = _SC["w_experience"]
+W_ASSESSMENT = _SC["w_assessment"]
 
 # --- consistency adjustment: summary vs career embedding agreement ---
-CONSISTENCY_HIGH = 0.70     # above -> +0.03 (profile tells one coherent story)
-CONSISTENCY_LOW = 0.50      # below -> -0.03 (summary contradicts career)
-CONSISTENCY_BONUS = 0.03
-MIN_SUMMARY_CHARS = 20      # below this, summary carries no signal -> 0.0
+CONSISTENCY_HIGH = _SC["consistency_high_threshold"]
+CONSISTENCY_LOW = _SC["consistency_low_threshold"]
+CONSISTENCY_BONUS = _SC["consistency_bonus"]
+MIN_SUMMARY_CHARS = _SC["min_summary_chars"]
 
 # --- negative-anchor penalty: proximity to anti-fit archetypes ---
 # Phase-2 measurement: JD top-20 mean max-anchor cosine 0.285, honeypots
 # 0.376, HR/Marketing 0.439 — the band below sits in that gap.
-ANCHOR_SOFT = 0.40          # below -> no penalty
-ANCHOR_HARD = 0.55          # at/above -> 0.10; in between -> 0.05
-ANCHOR_PENALTY_SOFT = 0.05
-ANCHOR_PENALTY_HARD = 0.10
+ANCHOR_SOFT = _SC["anchor_soft_threshold"]
+ANCHOR_HARD = _SC["anchor_hard_threshold"]
+ANCHOR_PENALTY_SOFT = _SC["anchor_penalty_soft"]
+ANCHOR_PENALTY_HARD = _SC["anchor_penalty_hard"]
 
 # --- gate / kill multipliers ---
-DQ_MULTIPLIER = 0.05        # disqualified: crushed but still ordered
-HONEYPOT_MULTIPLIER = 0.0   # honeypots: eliminated outright
-ASSESSMENT_GATE_MIN = 40.0  # L5: expert claim on a required skill needs >= 40
+DQ_MULTIPLIER = _SC["disqualifier_multiplier"]
+HONEYPOT_MULTIPLIER = _SC["honeypot_multiplier"]
+ASSESSMENT_GATE_MIN = CONFIG["assessment_gate"]["min_score_for_expert"]
 
 
 def consistency_adjustment(

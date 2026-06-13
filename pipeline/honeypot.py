@@ -31,12 +31,15 @@ from typing import Any
 
 from dateutil import parser as dateparser
 
+from config_loader import CONFIG
+
+_HP = CONFIG["honeypot"]
+
 # Tunables, named so the numbers in the checks are self-explanatory.
-EXPERT_MIN_MONTHS = 3            # check 1: expert needs >= 3 months
-YOE_GAP_ALLOWANCE = 0.35         # check 2: career months may be as low as
-                                 #          35% of stated YoE before flagging
-ASSESSMENT_CONTRADICTION = 25    # check 3: expert scoring < 25/100
-MAX_OVERLAP_MONTHS = 6.0         # check 4: > 6 months of role overlap
+EXPERT_MIN_MONTHS = _HP["expert_min_duration_months"]
+YOE_GAP_ALLOWANCE = _HP["yoe_gap_tolerance"]
+ASSESSMENT_CONTRADICTION = _HP["expert_assessment_min"]
+MAX_OVERLAP_MONTHS = _HP["overlap_months_threshold"]
 _DAYS_PER_MONTH = 30.44          # mean Gregorian month length
 
 _PRESENT_TOKENS = {"present", "current", "now", "ongoing"}
