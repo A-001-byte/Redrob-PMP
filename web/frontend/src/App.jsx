@@ -9,6 +9,7 @@ import CandidatesPage from './pages/CandidatesPage.jsx';
 
 // Heavy chart bundle (recharts) and the static story page load on demand.
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage.jsx'));
+const TalentMarketPage = lazy(() => import('./pages/TalentMarketPage.jsx'));
 const MethodologyPage = lazy(() => import('./pages/MethodologyPage.jsx'));
 const ComparePage = lazy(() => import('./pages/ComparePage.jsx'));
 
@@ -44,6 +45,14 @@ export default function App() {
               element={
                 <Suspense fallback={<PageFallback />}>
                   <AnalyticsPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="talent-market"
+              element={
+                <Suspense fallback={<PageFallback />}>
+                  <TalentMarketPage />
                 </Suspense>
               }
             />

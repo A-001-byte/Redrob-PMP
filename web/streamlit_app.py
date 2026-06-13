@@ -463,6 +463,87 @@ def main():
                 for note in attr.get("notes", []):
                     st.caption(note)
 
+    # --- talent market ---
+    with st.expander("Talent Market — supply-side intelligence over the full pool"):
+        st.caption(
+            "Aggregate signals over the qualified sub-pool (≥1 matched required skill, "
+            "no fraud flags). Everything is derived from in-memory features — no extra I/O."
+        )
+        qual = [
+            (cid, rec) for cid, rec in feats.items()
+            if rec.get("matched_required_skills")
+            and not rec.get("disqualifier_flag")
+            and not rec.get("is_honeypot")
+        ]
+        q_n = len(qual)
+        open_wk = sum(1 for _, r in qual if r.get("open_to_work_flag"))
+        short_n = sum(1 for _, r in qual if (r.get("notice_period_days") or 9999) <= 30)
+        act30 = sum(1 for _, r in qual if (r.get("days_inactive") or 999) < 30)
+
+        ma, mb, mc, md = st.columns(4)
+        ma.metric("Qualified pool", f"{q_n:,}",
+                  delta=f"{q_n / len(feats) * 100:.1f}% of corpus",
+                  delta_color="off")
+        mb.metric("Open to work", f"{open_wk / q_n * 100:.1f}%",
+                  delta=f"{open_wk:,} candidates", delta_color="off")
+        mc.metric("Short notice ≤ 30d", f"{short_n / q_n * 100:.1f}%",
+                  delta=f"{short_n:,} candidates", delta_color="off")
+        md.metric("Active last 30d", f"{act30 / q_n * 100:.1f}%",
+                  delta=f"{act30:,} candidates", delta_color="off")
+
+        from collections import Counter as _Counter
+        skill_counts = _Counter()
+        for _, rec in qual:
+            for s in rec.get("matched_required_skills") or []:
+                skill_counts[s] += 1
+        stack_counts = _Counter(
+            len(rec.get("matched_required_skills") or []) for _, rec in qual
+        )
+
+        c_left, c_right = st.columns(2)
+        with c_left:
+            st.markdown("**Required-skill supply** (top 12 skills, qualified pool)")
+            skill_df = pd.DataFrame(skill_counts.most_common(12),
+                                    columns=["skill", "candidates"])
+            st.bar_chart(skill_df.set_index("skill"), horizontal=True)
+
+        with c_right:
+            st.markdown("**Stack depth** — matched required skills per candidate")
+            stack_df = pd.DataFrame(
+                sorted(stack_counts.items()),
+                columns=["skills matched", "candidates"],
+            )
+            st.bar_chart(stack_df.set_index("skills matched"))
+
+        st.markdown("**Location depth**")
+        loc_data: dict[str, dict] = {}
+        for _, rec in qual:
+            loc = location_bucket(rec)
+            if loc not in loc_data:
+                loc_data[loc] = {"count": 0, "yoe_sum": 0.0, "yoe_n": 0,
+                                 "open_to_work": 0, "active_30d": 0}
+            d = loc_data[loc]
+            d["count"] += 1
+            yoe = rec.get("years_of_experience")
+            if yoe is not None:
+                d["yoe_sum"] += yoe
+                d["yoe_n"] += 1
+            if rec.get("open_to_work_flag"):
+                d["open_to_work"] += 1
+            if (rec.get("days_inactive") or 999) < 30:
+                d["active_30d"] += 1
+        loc_df = pd.DataFrame([
+            {
+                "location": loc,
+                "qualified": d["count"],
+                "mean yoe": round(d["yoe_sum"] / d["yoe_n"], 1) if d["yoe_n"] else None,
+                "open to work %": round(d["open_to_work"] / d["count"] * 100, 1),
+                "active 30d %": round(d["active_30d"] / d["count"] * 100, 1),
+            }
+            for loc, d in sorted(loc_data.items(), key=lambda x: -x[1]["count"])
+        ])
+        st.dataframe(loc_df, hide_index=True, width="stretch")
+
     # --- table + filters ---
     details = load_details(_mtime(DETAILS_JSON))
     df = pd.DataFrame([{

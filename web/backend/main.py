@@ -389,6 +389,114 @@ def fairness():
         return json.load(f)
 
 
+@app.get("/api/talent-market")
+def talent_market():
+    """Supply-side intelligence: aggregate signals over the full 100K pool,
+    scoped to the qualified sub-pool (≥1 matched required skill, not DQ, not
+    honeypot).  All data comes from the in-memory feats dict — no I/O."""
+    qualified = [
+        (cid, rec) for cid, rec in S.feats.items()
+        if rec.get("matched_required_skills")
+        and not rec.get("disqualifier_flag")
+        and not rec.get("is_honeypot")
+    ]
+
+    total = len(S.feats)
+    q_count = len(qualified)
+
+    # Per-skill supply in the qualified pool
+    skill_counts: Counter = Counter()
+    for _, rec in qualified:
+        for s in rec.get("matched_required_skills") or []:
+            skill_counts[s] += 1
+
+    # Stack depth: how many required skills each candidate matches
+    stack_counts: Counter = Counter()
+    for _, rec in qualified:
+        n = len(rec.get("matched_required_skills") or [])
+        stack_counts[n] += 1
+
+    # Location depth
+    loc_data: dict[str, dict] = {}
+    for _, rec in qualified:
+        loc = location_bucket(rec)
+        if loc not in loc_data:
+            loc_data[loc] = {"count": 0, "yoe_sum": 0.0, "yoe_n": 0,
+                             "open_to_work": 0, "active_30d": 0}
+        d = loc_data[loc]
+        d["count"] += 1
+        yoe = rec.get("years_of_experience")
+        if yoe is not None:
+            d["yoe_sum"] += yoe
+            d["yoe_n"] += 1
+        if rec.get("open_to_work_flag"):
+            d["open_to_work"] += 1
+        if (rec.get("days_inactive") or 999) < 30:
+            d["active_30d"] += 1
+
+    location_depth = sorted(
+        [
+            {
+                "location": loc,
+                "count": d["count"],
+                "mean_yoe": round(d["yoe_sum"] / d["yoe_n"], 1) if d["yoe_n"] else None,
+                "open_to_work_pct": round(d["open_to_work"] / d["count"] * 100, 1),
+                "active_30d_pct": round(d["active_30d"] / d["count"] * 100, 1),
+            }
+            for loc, d in loc_data.items()
+        ],
+        key=lambda x: -x["count"],
+    )
+
+    # YoE distribution
+    yoe_bands = [("< 2", 0, 2), ("2–5", 2, 5), ("5–8", 5, 8),
+                 ("8–12", 8, 12), ("12+", 12, 9999)]
+    yoe_dist = [
+        {
+            "band": label,
+            "count": sum(
+                1 for _, rec in qualified
+                if rec.get("years_of_experience") is not None
+                and lo <= rec["years_of_experience"] < hi
+            ),
+        }
+        for label, lo, hi in yoe_bands
+    ]
+
+    # Availability signals over the qualified pool
+    open_to_work = sum(1 for _, rec in qualified if rec.get("open_to_work_flag"))
+    short_notice = sum(1 for _, rec in qualified
+                       if (rec.get("notice_period_days") or 9999) <= 30)
+    active_30d = sum(1 for _, rec in qualified
+                     if (rec.get("days_inactive") or 9999) < 30)
+    high_response = sum(1 for _, rec in qualified
+                        if (rec.get("recruiter_response_rate") or 0) >= 0.6)
+
+    return {
+        "pool": {
+            "total": total,
+            "qualified": q_count,
+            "qualified_pct": round(q_count / total * 100, 1) if total else 0,
+        },
+        "availability": {
+            "open_to_work": open_to_work,
+            "open_to_work_pct": round(open_to_work / q_count * 100, 1) if q_count else 0,
+            "short_notice_30d": short_notice,
+            "short_notice_pct": round(short_notice / q_count * 100, 1) if q_count else 0,
+            "active_30d": active_30d,
+            "active_30d_pct": round(active_30d / q_count * 100, 1) if q_count else 0,
+            "high_response_rate": high_response,
+            "high_response_pct": round(high_response / q_count * 100, 1) if q_count else 0,
+        },
+        "skill_supply": [{"skill": s, "count": c}
+                         for s, c in skill_counts.most_common(15)],
+        "stack_depth": [{"skills": k, "count": stack_counts[k]}
+                        for k in sorted(stack_counts)],
+        "location_depth": location_depth,
+        "yoe_distribution": yoe_dist,
+    }
+
+
 @app.get("/api/export")
 def export_csv():
     if not SUBMISSION_CSV.exists():

@@ -8,6 +8,7 @@ const ROUTES = [
   { to: '/', label: 'Overview', end: true },
   { to: '/candidates', label: 'Candidates' },
   { to: '/analytics', label: 'Analytics' },
+  { to: '/talent-market', label: 'Market' },
   { to: '/methodology', label: 'Methodology' },
 ];
 
