@@ -187,8 +187,16 @@ def main() -> None:
     ce = CrossEncoder(CROSS_ENCODER_NAME, max_length=CE_MAX_LENGTH,
                       cache_folder=MODEL_CACHE_DIR)
     pairs = [(jd_query, texts[cid]["career_text"]) for cid, _ in l1]
-    ce_logits = ce.predict(pairs, batch_size=CE_BATCH_SIZE,
-                           show_progress_bar=False)
+    # Sort by career_text length to minimise padding waste in CE batches
+    orig_indices = list(range(len(pairs)))
+    sorted_order = sorted(orig_indices, key=lambda i: len(pairs[i][1]))
+    pairs_sorted = [pairs[i] for i in sorted_order]
+    ce_logits_sorted = ce.predict(pairs_sorted, batch_size=CE_BATCH_SIZE,
+                                  show_progress_bar=False)
+    # Re-align scores back to original pair order
+    ce_logits = [0.0] * len(pairs)
+    for orig_i, score in zip(sorted_order, ce_logits_sorted):
+        ce_logits[orig_i] = score
     l2 = rank_sort([(cid, float(s))
                     for (cid, _), s in zip(l1, ce_logits)])[: args.topk_l2]
     ce_of = dict(l2)

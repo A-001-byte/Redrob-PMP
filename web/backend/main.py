@@ -110,7 +110,27 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Redrob Ranker API", lifespan=lifespan)
+app = FastAPI(
+    title="Redrob Ranker",
+    description="""
+Intelligent candidate ranking system for the Redrob Hackathon (Track 01).
+
+Ranks 100,000 candidates against a Senior AI Engineer job description using a
+six-layer pipeline: FAISS retrieval → hybrid SBERT+BM25 (RRF) → cross-encoder
+re-rank → composite scoring → assessment gate → honeypot check.
+
+**Reproduce the submission:**
+```
+python pipeline/rank.py --precomputed precomputed/ --out submission/submission.csv
+```
+
+**GitHub:** https://github.com/A-001-byte/Redrob-PMP
+**HuggingFace Space:** https://huggingface.co/spaces/Buster01/redrob-ranker
+    """,
+    version="1.0.0",
+    contact={"name": "Team PMP"},
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -224,7 +244,9 @@ def health():
             "model_cached": model_cached}
 
 
-@app.get("/api/results")
+@app.get("/api/results",
+         summary="Get ranked candidates",
+         description="Returns the current top-100 ranked candidates with score breakdowns")
 def results():
     rows = read_submission()
     details = read_details()
@@ -376,7 +398,9 @@ def metrics():
     }
 
 
-@app.get("/api/fairness")
+@app.get("/api/fairness",
+         summary="Bias audit report",
+         description="Returns the bias audit report (impact ratios by education, location, YoE, company background)")
 def fairness():
     """Adverse-impact audit JSON (read fresh so a re-generated report shows
     without a server restart)."""
@@ -574,7 +598,9 @@ async def rerank_stream():
         S.rerank_lock.release()
 
 
-@app.post("/api/rerank")
+@app.post("/api/rerank",
+          summary="Trigger ranking run",
+          description="Triggers a fresh ranking run (SSE stream, ~45s, 60s cooldown)")
 async def rerank():
     since = time.time() - S.last_rerank_done
     if S.last_rerank_done and since < RERANK_COOLDOWN_S:
