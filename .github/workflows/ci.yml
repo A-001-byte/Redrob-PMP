@@ -26,14 +26,4 @@ jobs:
         run: python -m pytest tests/ -v --tb=short
 
       - name: Smoke-rank on sample data
-        run: |
-          python -c "
-import sys, os
-sys.path.insert(0, os.path.join(os.getcwd(), 'pipeline'))
-from config_loader import CONFIG
-from scorer import composite_score
-from honeypot import is_honeypot
-from reasoning import generate_reasoning
-assert CONFIG['scoring']['w_career'] == 0.30
-print('Pipeline imports and config: OK')
-          "
+        run: python tests/smoke.py
