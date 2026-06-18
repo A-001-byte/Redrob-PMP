@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements-pipeline.txt pytest
+
+      - name: Run unit tests
+        run: python -m pytest tests/ -v --tb=short
+
+      - name: Smoke-rank on sample data
+        run: |
+          python -c "
+          # Verify the pipeline imports cleanly and config loads
+          from pipeline.config_loader import CONFIG
+          from pipeline.scorer import composite_score
+          from pipeline.honeypot import is_honeypot
+          from pipeline.reasoning import generate_reasoning
+          assert CONFIG['scoring']['w_career'] == 0.30
+          print('Pipeline imports and config: OK')
+          "

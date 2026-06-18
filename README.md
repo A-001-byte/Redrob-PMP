@@ -1,5 +1,7 @@
 # Redrob Ranker — Intelligent Candidate Ranking System
 
+![CI](https://github.com/A-001-byte/Redrob-PMP/actions/workflows/ci.yml/badge.svg)
+
 ## Redrob Hackathon | Track 01: The Data & AI Challenge
 
 Redrob Ranker ranks 100,000 raw candidate profiles against the Senior ML
