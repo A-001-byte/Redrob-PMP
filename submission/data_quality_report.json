@@ -1,0 +1,201 @@
+{
+  "overview": {
+    "total_candidates": 100000,
+    "honeypot_count": 40,
+    "honeypot_pct": 0.04,
+    "disqualified_count": 10334,
+    "disqualified_pct": 10.33,
+    "qualified_count": 54126,
+    "qualified_pct": 54.13
+  },
+  "field_completeness": {
+    "assessment_score_present_pct": 5.3,
+    "github_score_present_pct": 35.3,
+    "recruiter_response_present_pct": 100.0,
+    "open_to_work_pct": 35.3,
+    "career_descriptions_pct": 100.0,
+    "has_required_skills_pct": 22.2
+  },
+  "score_distributions": {
+    "career_score": {
+      "n": 54126,
+      "mean": 0.5081,
+      "median": 0.49,
+      "std": 0.1263,
+      "min": 0.215,
+      "max": 1.0,
+      "p25": 0.415,
+      "p75": 0.59,
+      "p95": 0.715,
+      "pct_zero": 0.0
+    },
+    "skill_score": {
+      "n": 54126,
+      "mean": 0.0647,
+      "median": 0.025,
+      "std": 0.0696,
+      "min": 0.0013,
+      "max": 0.7487,
+      "p25": 0.0187,
+      "p75": 0.105,
+      "p95": 0.2025,
+      "pct_zero": 0.0
+    },
+    "experience_score": {
+      "n": 54126,
+      "mean": 0.5682,
+      "median": 0.565,
+      "std": 0.1878,
+      "min": 0.25,
+      "max": 1.0,
+      "p25": 0.4075,
+      "p75": 0.695,
+      "p95": 0.905,
+      "pct_zero": 0.0
+    },
+    "assessment_score": {
+      "n": 54126,
+      "mean": 0.0465,
+      "median": 0.0,
+      "std": 0.1597,
+      "min": 0.0,
+      "max": 0.973,
+      "p25": 0.0,
+      "p75": 0.0,
+      "p95": 0.511,
+      "pct_zero": 91.6
+    },
+    "availability_multiplier": {
+      "n": 54126,
+      "mean": 0.91,
+      "median": 0.92,
+      "std": 0.1458,
+      "min": 0.48,
+      "max": 1.25,
+      "p25": 0.82,
+      "p75": 1.02,
+      "p95": 1.15,
+      "pct_zero": 0.0
+    }
+  },
+  "location_distribution": {
+    "buckets": {
+      "Tier-1 India (other)": {
+        "count": 41680,
+        "pct": 41.7
+      },
+      "Other India": {
+        "count": 24964,
+        "pct": 25.0
+      },
+      "International": {
+        "count": 24887,
+        "pct": 24.9
+      },
+      "Noida": {
+        "count": 4283,
+        "pct": 4.3
+      },
+      "Pune": {
+        "count": 4186,
+        "pct": 4.2
+      }
+    },
+    "top5_cities": [
+      {
+        "city": "Bhubaneswar",
+        "count": 4321
+      },
+      {
+        "city": "Noida",
+        "count": 4283
+      },
+      {
+        "city": "Hyderabad",
+        "count": 4283
+      },
+      {
+        "city": "Jaipur",
+        "count": 4268
+      },
+      {
+        "city": "Bangalore",
+        "count": 4238
+      }
+    ]
+  },
+  "yoe_distribution": {
+    "bands": {
+      "<3": 7047,
+      "3-4": 9721,
+      "5-9": 25008,
+      "10-13": 9850,
+      "14+": 2500
+    },
+    "mean_yoe": 7.22,
+    "median_yoe": 6.9
+  },
+  "education_distribution": {
+    "Tier-3": {
+      "count": 21455,
+      "pct": 39.6
+    },
+    "Tier-4 / unknown": {
+      "count": 16068,
+      "pct": 29.7
+    },
+    "Tier-2": {
+      "count": 12798,
+      "pct": 23.6
+    },
+    "Tier-1": {
+      "count": 3805,
+      "pct": 7.0
+    }
+  },
+  "assessment_sparsity": {
+    "candidates_with_assessment_pct": 5.3,
+    "candidates_without_assessment_pct": 94.7,
+    "nonzero_mean": 0.5541,
+    "nonzero_median": 0.559,
+    "nonzero_dist": {
+      "n": 4538,
+      "mean": 0.5541,
+      "median": 0.5587,
+      "std": 0.1515,
+      "min": 0.25,
+      "max": 0.973,
+      "p25": 0.432,
+      "p75": 0.681,
+      "p95": 0.779,
+      "pct_zero": 0.0
+    }
+  },
+  "top100_vs_pool": {
+    "career_score": {
+      "top100_mean": 0.9524,
+      "pool_mean": 0.5081,
+      "lift_x": 1.87
+    },
+    "skill_score": {
+      "top100_mean": 0.3598,
+      "pool_mean": 0.0647,
+      "lift_x": 5.56
+    },
+    "experience_score": {
+      "top100_mean": 0.7818,
+      "pool_mean": 0.5682,
+      "lift_x": 1.38
+    },
+    "assessment_score": {
+      "top100_mean": 0.4993,
+      "pool_mean": 0.0465,
+      "lift_x": 10.75
+    },
+    "availability_multiplier": {
+      "top100_mean": 1.1648,
+      "pool_mean": 0.91,
+      "lift_x": 1.28
+    }
+  }
+}
