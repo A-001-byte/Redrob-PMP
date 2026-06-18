@@ -39,7 +39,7 @@ OFFSETS_PATH = PROJECT_ROOT / "data" / "labeling_candidates.json"
 
 sys.path.insert(0, str(PIPELINE_DIR))
 from scorer import (composite_score, consistency_adjustment,  # noqa: E402
-                    negative_anchor_penalty)
+                    negative_anchor_penalty, assessment_gate_violations)
 
 RERANK_COOLDOWN_S = 60
 PREVIEW_MAX_IDS = 200
@@ -97,6 +97,175 @@ def load_vectors():
         "summary": np.load(PRECOMPUTED_DIR / "summary_embeddings.npy",
                            mmap_mode="r"),
     }
+
+
+@st.cache_resource(show_spinner=False)
+def load_gate_data() -> dict[str, list]:
+    gate_path = PRECOMPUTED_DIR / "gate_data.pkl"
+    if not gate_path.exists():
+        return {}
+    with open(gate_path, "rb") as f:
+        return pickle.load(f)
+
+
+@st.cache_data(show_spinner=False)
+def compute_proxy_sorted(_mtime_feats: float) -> list[tuple[str, float]]:
+    feats = load_feats()
+    proxy_list: list[tuple[str, float]] = []
+    for cid, rec in feats.items():
+        if (rec.get("matched_required_skills")
+                and not rec.get("disqualifier_flag")
+                and not rec.get("is_honeypot")):
+            p = (rec["career_score"] * 0.30 + rec["skill_score"] * 0.20
+                 + rec["experience_score"] * 0.10 + rec["assessment_score"] * 0.15
+                 ) * rec["availability_multiplier"]
+            proxy_list.append((cid, p))
+    return sorted(proxy_list, key=lambda t: (-t[1], t[0]))
+
+
+# Explanation constants shared with main.py logic
+_REQUIRED_SKILLS_EX = [
+    "embedding models", "vector search & retrieval",
+    "Python", "ranking & evaluation",
+]
+_COMP_WEIGHTS_EX = {"semantic": 0.25, "career": 0.30, "skill": 0.20,
+                    "experience": 0.10, "assessment": 0.15}
+_COMP_LABELS_EX = {"semantic": "Semantic alignment", "career": "Career trajectory",
+                   "skill": "JD skill match", "experience": "Experience fit",
+                   "assessment": "Assessment scores"}
+
+
+def _career_expl_st(s: float) -> str:
+    if s > 0.80:
+        return "Strong product-company career with production ML deployments and retrieval domain experience"
+    if s > 0.60:
+        return "Solid ML career; some IT-services exposure or adjacent roles present"
+    if s > 0.40:
+        return "Mixed career background; limited direct ML/AI product-company experience"
+    return "Career history primarily in non-ML or IT-services roles"
+
+
+def _skill_expl_st(rec: dict) -> str:
+    matched = set(rec.get("matched_required_skills") or [])
+    missing = [s for s in _REQUIRED_SKILLS_EX if s not in matched]
+    return (f"Matches {len(matched)} of 4 required skill groups; missing: {', '.join(missing)}"
+            if missing else "Matches all 4 required skill groups")
+
+
+def _experience_expl_st(rec: dict) -> str:
+    yoe = rec.get("years_of_experience")
+    yf, lf, ef = rec.get("yoe_fit", 0.0), rec.get("location_fit", 0.0), rec.get("education_tier_score", 0.0)
+    loc = rec.get("location") or "Unknown"
+    yoe_lbl = "target range" if yf >= 1.0 else "adjacent" if yf >= 0.7 else "outer range" if yf >= 0.4 else "outside target range"
+    loc_lbl = "target location" if lf >= 1.0 else "tier-1 India" if lf >= 0.8 else "willing to relocate" if lf >= 0.65 else "other India" if lf >= 0.3 else "international"
+    edu_lbl = "Tier-1" if ef >= 1.0 else "Tier-2" if ef >= 0.8 else "Tier-3" if ef >= 0.6 else "Tier-4 or unknown"
+    return f"YoE {f'{yoe:.1f} yrs' if yoe is not None else 'unknown'} ({yoe_lbl}); {loc} ({loc_lbl}); {edu_lbl} education"
+
+
+def build_explanation_st(candidate_id: str, feats: dict, rank_details: dict,
+                         gate_data: dict, proxy_sorted: list) -> dict:
+    rec = feats[candidate_id]
+    detail = rank_details.get(candidate_id)
+    in_top100 = detail is not None
+
+    cs, ss, es, asmt = rec["career_score"], rec["skill_score"], rec["experience_score"], rec["assessment_score"]
+    avail = rec["availability_multiplier"]
+    matched_req = set(rec.get("matched_required_skills") or [])
+
+    if in_top100:
+        parts = detail["parts"]
+        sem = parts["semantic"] / _COMP_WEIGHTS_EX["semantic"]
+        composite, rank = detail["composite"], detail["rank"]
+        traj, cons, anchor = parts.get("trajectory", 0.0), parts.get("consistency", 0.0), -parts.get("anchor_penalty", 0.0)
+    else:
+        sem = None
+        composite = (cs * 0.30 + ss * 0.20 + es * 0.10 + asmt * 0.15) * avail
+        rank, traj, cons, anchor = None, rec.get("trajectory_adjustment", 0.0), 0.0, 0.0
+
+    def expl(f: str) -> str:
+        if f == "semantic":
+            return (f"Semantic alignment with JD: {sem:.3f} (career description language match)"
+                    if sem is not None else "Semantic score not available for candidates outside top-100")
+        if f == "career":     return _career_expl_st(cs)
+        if f == "skill":      return _skill_expl_st(rec)
+        if f == "experience": return _experience_expl_st(rec)
+        if f == "assessment":
+            return ("No Redrob assessment data available" if asmt == 0
+                    else f"Redrob assessment average: {asmt * 100:.0f}/100 across JD-relevant skills")
+        return ""
+
+    contribs = {"semantic": sem * 0.25 if sem is not None else None,
+                "career": cs * 0.30, "skill": ss * 0.20,
+                "experience": es * 0.10, "assessment": asmt * 0.15}
+    all_comps = [
+        {"factor": f, "label": _COMP_LABELS_EX[f],
+         "value": round(sem if f == "semantic" else rec.get(f"{f}_score", 0.0), 4) if (f != "semantic" or sem is not None) else None,
+         "weight": _COMP_WEIGHTS_EX[f],
+         "weighted_contribution": round(contribs[f], 4),
+         "explanation": expl(f)}
+        for f in ["semantic", "career", "skill", "experience", "assessment"]
+        if contribs[f] is not None
+    ]
+    strengths = sorted([c for c in all_comps if c["weighted_contribution"] > 0.15], key=lambda c: -c["weighted_contribution"])
+    weaknesses = sorted([c for c in all_comps if c["weighted_contribution"] < 0.08], key=lambda c: c["weighted_contribution"])
+
+    # Improvement paths
+    paths: list[dict] = []
+    missing_skills = [s for s in _REQUIRED_SKILLS_EX if s not in matched_req]
+    if asmt < 0.50:
+        paths.append({"action": "Complete Redrob skill assessments for JD-required skills",
+                      "impact": f"Could improve assessment_score from {asmt:.2f} to ~0.80 (+{(0.80 - asmt) * 0.15 * avail:.3f} composite)",
+                      "effort": "low"})
+    if len(matched_req) < 3 and missing_skills:
+        target = min(ss + 0.30, 1.0)
+        paths.append({"action": f"Highlight {', '.join(missing_skills[:2])} experience more explicitly in career descriptions",
+                      "impact": f"Could improve skill_score from {ss:.2f} toward {target:.2f} (+{(target - ss) * 0.20 * avail:.3f} composite)",
+                      "effort": "medium"})
+    if avail < 0.90:
+        base_na = cs * 0.30 + ss * 0.20 + es * 0.10 + asmt * 0.15
+        paths.append({"action": "Update profile activity and response rate on Redrob",
+                      "impact": f"Could improve availability multiplier from {avail:.2f} to ~1.10 (+{(1.10 - avail) * base_na:.3f} composite)",
+                      "effort": "low"})
+    lf = rec.get("location_fit", 0.0)
+    if lf < 0.65 and len(paths) < 3:
+        paths.append({"action": "Enable willing_to_relocate flag for Pune/Noida",
+                      "impact": f"Could improve location_fit component (+{(0.65 - lf) * 0.35 * 0.10 * avail:.3f} composite)",
+                      "effort": "low"})
+    if cs < 0.60 and len(paths) < 3:
+        paths.append({"action": "Add quantified production deployment metrics to career descriptions",
+                      "impact": "Production signal and domain indicator are currently low; adding them raises career_score",
+                      "effort": "high"})
+
+    violations = assessment_gate_violations(gate_data.get(candidate_id))
+    if in_top100:
+        by_rank = {v["rank"]: v["composite"] for v in rank_details.values()}
+        r1, r10, r100 = by_rank.get(1, composite), by_rank.get(10, composite), by_rank.get(100, composite)
+        rank_context: dict = {"rank": rank, "score": round(composite, 4),
+                              "score_vs_rank1": round(composite - r1, 4),
+                              "score_vs_rank10": round(composite - r10, 4),
+                              "score_vs_rank100": round(composite - r100, 4),
+                              "in_top_100": True}
+        dom = strengths[0] if strengths else None
+        gap = weaknesses[0] if weaknesses else None
+        summary = (f"Rank #{rank} of 100. "
+                   + (f"{dom['label']} is the dominant strength ({dom['weighted_contribution']:.3f} weighted). " if dom else "")
+                   + (f"Main gap is {gap['label'].lower()} coverage." if gap else "")).strip()
+    else:
+        est_rank = sum(1 for _, s in proxy_sorted if s > composite) + 1
+        rank_context = {"rank": None, "score": None,
+                        "estimated_score": round(composite, 4),
+                        "in_top_100": False, "estimated_rank_if_not_in_top100": est_rank}
+        summary = (f"Not in current top-100. Estimated rank ~{est_rank} in the qualified pool "
+                   f"(proxy score {round(composite, 4)}, excludes semantic).")
+
+    return {"candidate_id": candidate_id, "rank": rank, "composite_score": round(composite, 4),
+            "strengths": strengths, "weaknesses": weaknesses,
+            "adjustments": {"trajectory": traj, "consistency": cons, "anchor_penalty": anchor,
+                            "availability_multiplier": avail,
+                            "disqualifier": bool(rec.get("disqualifier_flag")),
+                            "honeypot": bool(rec.get("is_honeypot"))},
+            "gate_status": {"passes_l5_gate": not violations, "violations": violations},
+            "improvement_paths": paths[:3], "rank_context": rank_context, "summary": summary}
 
 
 @st.cache_resource
@@ -543,6 +712,83 @@ def main():
             for loc, d in sorted(loc_data.items(), key=lambda x: -x[1]["count"])
         ])
         st.dataframe(loc_df, hide_index=True, width="stretch")
+
+    # --- explain a candidate ---
+    with st.expander("Explain a candidate — rank position, strengths, weaknesses, improvement paths"):
+        cid_input = st.text_input("Candidate ID", placeholder="e.g. CAND_0046525",
+                                  key="explain_cid")
+        if st.button("Explain", disabled=not cid_input.strip(), key="explain_btn"):
+            cid_q = cid_input.strip().upper()
+            if cid_q not in feats:
+                st.error(f"{cid_q} not found in features.pkl")
+            else:
+                gd = load_gate_data()
+                ps = compute_proxy_sorted(_mtime(PRECOMPUTED_DIR / "features.pkl"))
+                exp = build_explanation_st(cid_q, feats,
+                                           load_details(_mtime(DETAILS_JSON)), gd, ps)
+                st.info(exp["summary"])
+                ea, eb = st.columns(2)
+                with ea:
+                    st.markdown("**Strengths** (weighted contribution > 0.15)")
+                    if exp["strengths"]:
+                        for c in exp["strengths"]:
+                            st.metric(label=c["label"],
+                                      value=f"{c['weighted_contribution']:.3f}",
+                                      delta=c["explanation"],
+                                      delta_color="normal")
+                    else:
+                        st.caption("No components above the strength threshold.")
+                with eb:
+                    st.markdown("**Weaknesses** (weighted contribution < 0.08)")
+                    if exp["weaknesses"]:
+                        for c in exp["weaknesses"]:
+                            st.metric(label=c["label"],
+                                      value=f"{c['weighted_contribution']:.3f}",
+                                      delta=c["explanation"],
+                                      delta_color="inverse")
+                    else:
+                        st.caption("No components below the weakness threshold.")
+
+                st.markdown("**Adjustments**")
+                adj = exp["adjustments"]
+                st.caption(
+                    f"Trajectory: {adj['trajectory']:+.3f} · "
+                    f"Consistency: {adj['consistency']:+.3f} · "
+                    f"Anchor penalty: {adj['anchor_penalty']:+.3f} · "
+                    f"Availability: ×{adj['availability_multiplier']:.2f} · "
+                    f"Disqualified: {'Yes' if adj['disqualifier'] else 'No'} · "
+                    f"Honeypot: {'Yes' if adj['honeypot'] else 'No'}"
+                )
+
+                gs = exp["gate_status"]
+                if gs["passes_l5_gate"]:
+                    st.success("L5 gate: passes (no expert-claim violations)")
+                else:
+                    st.warning(f"L5 gate: violations on {', '.join(gs['violations'])}")
+
+                st.markdown("**Improvement paths**")
+                effort_icon = {"low": "🟢", "medium": "🟡", "high": "🔴"}
+                for i, path in enumerate(exp["improvement_paths"], 1):
+                    icon = effort_icon.get(path["effort"], "•")
+                    st.markdown(f"{i}. {icon} **{path['action']}**  \n"
+                                f"   _{path['impact']}_")
+
+                rc = exp["rank_context"]
+                st.markdown("**Rank context**")
+                rc_rows = {}
+                if rc.get("rank"):
+                    rc_rows["Rank"] = f"#{rc['rank']} of 100"
+                    rc_rows["Score"] = f"{rc['score']:.4f}"
+                    rc_rows["vs Rank 1"]   = f"{rc['score_vs_rank1']:+.4f}"
+                    rc_rows["vs Rank 10"]  = f"{rc['score_vs_rank10']:+.4f}"
+                    rc_rows["vs Rank 100"] = f"{rc['score_vs_rank100']:+.4f}"
+                else:
+                    rc_rows["In top-100"] = "No"
+                    rc_rows["Estimated score"] = str(rc.get("estimated_score"))
+                    rc_rows["Estimated rank (qualified pool)"] = str(rc.get("estimated_rank_if_not_in_top100"))
+                st.dataframe(pd.DataFrame(list(rc_rows.items()),
+                                          columns=["metric", "value"]),
+                             hide_index=True, width=400)
 
     # --- table + filters ---
     details = load_details(_mtime(DETAILS_JSON))
