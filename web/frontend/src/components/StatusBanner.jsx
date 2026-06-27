@@ -21,7 +21,7 @@ export default function StatusBanner({ rerank }) {
           <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" aria-hidden="true" />
         )}
         {status === 'success' && (
-          <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden="true" />
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
         )}
         {status === 'error' && (
           <XCircle className="h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
@@ -29,23 +29,23 @@ export default function StatusBanner({ rerank }) {
         <span
           className={`text-sm font-medium ${
             status === 'error'
-              ? 'text-red-400'
+              ? 'text-destructive'
               : status === 'success'
-                ? 'text-emerald-400'
-                : 'text-slate-300'
+                ? 'text-success'
+                : 'text-muted'
           }`}
         >
           {status === 'success' ? `✓ ${message}` : message}
         </span>
         {status === 'running' && (
           <div className="ml-auto flex w-1/3 min-w-32 items-center gap-2">
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+            <div className="h-1.5 flex-1 overflow-hidden rounded bg-muted">
               <div
-                className="h-full rounded-full bg-primary bar-glow transition-[width] duration-700 ease-out"
+                className="h-full rounded bg-primary bar-glow animate-bar-pulse transition-[width] duration-700 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <span className="font-heading text-xs text-slate-400">{progress}%</span>
+            <span className="font-heading text-xs text-muted">{progress}%</span>
           </div>
         )}
       </div>

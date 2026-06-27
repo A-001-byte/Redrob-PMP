@@ -48,13 +48,13 @@ _ID_PREFIX_B = re.compile(rb'^\{"candidate_id": "(CAND_\d{7})"')
 
 # Design-system tokens (generated palette, verbatim).
 C = {
-    "primary": "#1E40AF", "secondary": "#3B82F6", "accent": "#D97706",
-    "background": "#F8FAFC", "foreground": "#1E3A8A", "muted": "#E9EEF6",
-    "border": "#DBEAFE", "destructive": "#DC2626",
-    "good": "#10B981", "warn": "#EAB308", "low": "#F97316",
+    "primary": "#5B21B6", "secondary": "#E55B44", "accent": "#059669",
+    "background": "#FAF5EB", "foreground": "#1F1625", "muted": "#6B5B7B",
+    "border": "#E6DEC9", "destructive": "#DC2626",
+    "good": "#059669", "warn": "#D97706", "low": "#0284C7",
 }
-PART_COLORS = {"semantic": "#1E40AF", "career": "#3B82F6", "skill": "#60A5FA",
-               "experience": "#93C5FD", "assessment": "#D97706"}
+PART_COLORS = {"semantic": "#0284C7", "career": "#5B21B6", "skill": "#059669",
+               "experience": "#D97706", "assessment": "#E55B44"}
 
 st.set_page_config(page_title="Redrob Ranker", page_icon="📡", layout="wide")
 

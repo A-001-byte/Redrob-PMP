@@ -18,7 +18,7 @@ export default function ScoreWaterfall({ parts }) {
   }
   for (const k of adj) {
     const d = parts[k] ?? 0;
-    steps.push({ k, delta: d, start: run, color: d < 0 ? '#EF4444' : '#34D399' });
+    steps.push({ k, delta: d, start: run, color: d < 0 ? 'var(--danger)' : 'var(--accent)' });
     run += d;
   }
 
@@ -30,12 +30,12 @@ export default function ScoreWaterfall({ parts }) {
   const scale = Math.max(0.3, run, base, composite);
   const pct = (x) => `${Math.max(0, (x / scale) * 100)}%`;
 
-  const Bar = ({ label, start, width, color, value, tone = 'text-slate-400' }) => (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="w-24 shrink-0 text-slate-500">{label}</span>
-      <div className="relative h-2.5 flex-1 overflow-hidden rounded-sm bg-muted">
+  const Bar = ({ label, start, width, color, value, tone = 'text-muted' }) => (
+    <div className="flex items-center gap-2 text-caption">
+      <span className="w-24 shrink-0 text-muted">{label}</span>
+      <div className="relative h-2 flex-1 overflow-hidden rounded bg-background border border-border">
         <div
-          className="absolute h-full rounded-sm"
+          className="absolute h-full rounded"
           style={{
             left: pct(start),
             width: `max(2px, ${pct(width)})`,
@@ -43,7 +43,7 @@ export default function ScoreWaterfall({ parts }) {
           }}
         />
       </div>
-      <span className={`w-14 shrink-0 text-right font-heading ${tone}`}>{value}</span>
+      <span className={`w-14 shrink-0 text-right font-mono ${tone}`}>{value}</span>
     </div>
   );
 
@@ -58,7 +58,7 @@ export default function ScoreWaterfall({ parts }) {
           color={color}
           value={`${delta < 0 ? '-' : '+'}${Math.abs(delta).toFixed(3)}`}
           tone={
-            delta < 0 ? 'text-red-400' : delta === 0 ? 'text-slate-600' : 'text-slate-400'
+            delta < 0 ? 'text-destructive font-semibold' : delta === 0 ? 'text-muted/50' : 'text-primary'
           }
         />
       ))}
@@ -67,26 +67,26 @@ export default function ScoreWaterfall({ parts }) {
           label={Math.abs(run - base) > 1e-9 ? 'Base (clamped)' : 'Base'}
           start={0}
           width={base}
-          color="#64748B"
+          color="var(--muted)"
           value={base.toFixed(3)}
-          tone="font-medium text-slate-300"
+          tone="font-semibold text-primary"
         />
       </div>
-      <div className="text-xs text-slate-500">
+      <div className="text-caption text-muted font-mono pl-26">
         × availability{' '}
-        <span className="font-heading font-medium text-slate-300">{avail.toFixed(2)}</span>
+        <span className="font-mono font-semibold text-primary">{avail.toFixed(2)}</span>
         {dq !== 1 && (
-          <span className="text-red-400"> · × disqualified {dq.toFixed(2)}</span>
+          <span className="text-destructive font-semibold"> · × disqualified {dq.toFixed(2)}</span>
         )}
-        {hp !== 1 && <span className="text-red-400"> · × honeypot {hp.toFixed(2)}</span>}
+        {hp !== 1 && <span className="text-destructive font-semibold"> · × honeypot {hp.toFixed(2)}</span>}
       </div>
       <Bar
         label="Composite"
         start={0}
         width={composite}
-        color="#60A5FA"
+        color="var(--secondary)"
         value={composite.toFixed(4)}
-        tone="font-semibold text-secondary"
+        tone="font-bold text-secondary"
       />
     </div>
   );

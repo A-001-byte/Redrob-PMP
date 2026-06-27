@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 
 const MS_PER_MONTH = 30.44 * 24 * 3600 * 1000;
-const BAR_COLORS = ['#60A5FA', '#3B82F6', '#818CF8', '#93C5FD', '#2563EB'];
+const BAR_COLORS = ['var(--info)', 'var(--muted)', 'var(--support)', 'var(--secondary)', 'var(--primary)'];
 
 function parseStart(d) {
   if (!d) return null;
@@ -40,7 +40,7 @@ export default function CareerTimeline({ history }) {
 
   return (
     <div className="mb-4">
-      <div className="relative rounded-md border border-border bg-surface-hover/40 px-2 pb-5 pt-2">
+      <div className="relative rounded border border-border bg-surface-hover/50 px-2 pb-5 pt-2">
         {/* year gridlines */}
         {years.map((y) => {
           const x = pct(Date.UTC(y, 0, 1));
@@ -53,7 +53,7 @@ export default function CareerTimeline({ history }) {
                 aria-hidden="true"
               />
               <span
-                className="absolute bottom-0.5 -translate-x-1/2 font-heading text-[9px] text-slate-600"
+                className="absolute bottom-0.5 -translate-x-1/2 font-mono text-label text-muted"
                 style={{ left: `${x}%` }}
               >
                 {y}
@@ -66,12 +66,10 @@ export default function CareerTimeline({ history }) {
           {roles.map((r, i) => (
             <div key={`${r.company}-${r.start}`} className="relative h-4">
               <motion.div
-                className={`absolute top-0.5 h-3 rounded-sm ${
-                  r.is_current ? 'shadow-glow-emerald' : ''
-                }`}
+                className="absolute top-0.5 h-3 rounded-sm"
                 style={{
                   left: `${pct(r.start)}%`,
-                  backgroundColor: r.is_current ? '#34D399' : BAR_COLORS[i % BAR_COLORS.length],
+                  backgroundColor: r.is_current ? 'var(--accent)' : BAR_COLORS[i % BAR_COLORS.length],
                 }}
                 initial={{ width: 0 }}
                 whileInView={{ width: `${Math.max(1.5, pct(r.end) - pct(r.start))}%` }}
@@ -85,7 +83,7 @@ export default function CareerTimeline({ history }) {
           ))}
         </div>
       </div>
-      <p className="mt-1 text-[10px] text-slate-600">
+      <p className="mt-1 text-caption text-muted">
         Hover a bar for the role · green = current · gaps and overlaps are real data
       </p>
     </div>

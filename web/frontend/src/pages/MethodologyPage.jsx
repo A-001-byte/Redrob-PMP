@@ -1,269 +1,398 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  Database,
+  Search,
+  Layers,
+  Cpu,
+  Calculator,
+  ShieldCheck,
+  CheckCircle2,
+  ChevronDown,
   AlertTriangle,
   Ban,
-  Calculator,
-  Layers,
   Lock,
-  ShieldCheck,
   Timer,
+  Sparkles
 } from 'lucide-react';
 import Reveal from '../components/motion/Reveal.jsx';
 import { pageEnter } from '../components/motion/presets.js';
-import { PART_COLORS } from '../utils/formatters.js';
+import { PART_COLORS, PART_LABELS } from '../utils/formatters.js';
 
-/** Static storytelling page — content mirrors PROJECT_CONTEXT.md §3–5;
- *  numbers must match pipeline/scorer.py and honeypot.py exactly. */
-
-const LAYERS = [
-  {
-    id: 'L0',
-    title: 'FAISS dense retrieval',
-    out: '100,000 → 5,000',
-    body: 'Exact inner-product search over L2-normalized 384-d career embeddings (all-MiniLM-L6-v2) against the JD embedding. A full corpus scan takes ~10 ms.',
-  },
-  {
-    id: 'L1',
-    title: 'Hybrid RRF fusion',
-    out: '5,000 → 500',
-    body: 'Weighted Reciprocal Rank Fusion (70/30, k=60) of the dense ranking with BM25 over the JD’s distinctive lexical terms — rank-based, so immune to score-scale mismatch between the two channels.',
-  },
-  {
-    id: 'L2',
-    title: 'Cross-encoder re-rank',
-    out: '500 → 200',
-    body: 'ms-marco-MiniLM-L-6-v2 scores (JD query, career text) pairs jointly — the most accurate and the slowest layer, ~80% of total rank time.',
-  },
-  {
-    id: 'L3',
-    title: 'Interpretable composite',
-    out: '200 → 150',
-    body: 'A transparent weighted formula over five signal families plus calibrated adjustments — every final score decomposes into auditable parts (see the drawer waterfall).',
-  },
-  {
-    id: 'L4',
-    title: 'LambdaRank slot',
-    out: '150 → 100 + bench',
-    body: 'A deliberate pass-through extension point for a learned ranker — left untrained because training on rank-derived synthetic labels would be circular.',
-  },
-  {
-    id: 'L5',
-    title: 'Assessment hard gate',
-    out: 'ranks 1–20',
-    body: 'An "expert" claim on a JD-required skill must be backed by an assessment score ≥ 40/100; violators are demoted below rank 20.',
-  },
-  {
-    id: 'L6',
-    title: 'Zero-tolerance safety',
-    out: 'final 100',
-    body: 'Any honeypot or disqualified profile that survives to the final 100 is physically replaced from the clean bench (ranks 101–150).',
-  },
-];
-
-const WEIGHTS = [
-  { key: 'career', label: 'Career quality', w: 0.3 },
-  { key: 'semantic', label: 'Semantic fit', w: 0.25 },
-  { key: 'skill', label: 'Skill match', w: 0.2 },
-  { key: 'assessment', label: 'Assessments', w: 0.15 },
-  { key: 'experience', label: 'Experience fit', w: 0.1 },
-];
-
-const HONEYPOT_CHECKS = [
-  {
-    title: 'Skill-duration fraud',
-    body: '"Expert" proficiency claimed with under 3 months of usage.',
-  },
-  {
-    title: 'Experience inflation',
-    body: 'Summed career months under 35% of the stated years of experience.',
-  },
-  {
-    title: 'Assessment contradiction',
-    body: 'An "expert" claim scoring below 25/100 on its own platform assessment.',
-  },
-  {
-    title: 'Impossible timeline',
-    body: 'Two full-time roles overlapping by more than 6 months.',
-  },
-];
-
-const DQ_CHECKS = [
-  { title: 'Pure IT-services history', body: 'Every role at an IT-services firm — penalized for this product-engineering JD.' },
-  { title: 'Title-chaser pattern', body: '≥ 60% of roles under 18 months with title escalation across consecutive short stints.' },
-  { title: 'Wrong specialization', body: 'Pure CV/Speech/Robotics profile with zero NLP or retrieval signal.' },
-];
-
-function SectionHeading({ icon: Icon, title, sub }) {
+function Connector({ countReduction }) {
   return (
-    <div className="mb-5">
-      <h2 className="flex items-center gap-2 font-heading text-xl font-semibold text-foreground">
-        <Icon className="h-5 w-5 text-secondary" aria-hidden="true" />
-        {title}
-      </h2>
-      {sub && <p className="mt-1 text-sm text-slate-500">{sub}</p>}
+    <div className="flex flex-col items-center my-1">
+      <div className="h-6 w-0.5 bg-border/60" />
+      {countReduction && (
+        <span className="bg-surface-hover border border-border/60 px-2 py-0.5 rounded font-mono text-[10px] font-bold text-primary my-1">
+          {countReduction}
+        </span>
+      )}
+      <div className="h-6 w-0.5 bg-border/60" />
+      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-surface border border-border/80 text-muted/60 shadow-sm">
+        <ChevronDown className="h-3 w-3" />
+      </div>
+    </div>
+  );
+}
+
+function PipelineStage({ id, number, title, icon: Icon, subtitle, output, isOpen, onToggle, children }) {
+  return (
+    <div className="border border-border bg-surface rounded-xl overflow-hidden transition-all duration-150 hover:border-border/80 shadow-sm">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full flex flex-col md:flex-row md:items-center justify-between px-6 py-4 text-left hover:bg-surface-hover transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
+      >
+        <div className="flex items-center gap-4 min-w-0 flex-1">
+          <div className="h-10 w-10 shrink-0 rounded-lg bg-surface-hover border border-border flex items-center justify-center text-primary">
+            {Icon && <Icon className="h-5 w-5" />}
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-primary">Stage {number}</span>
+              <span className="text-muted/40">·</span>
+              <span className="text-muted/80 text-caption font-semibold">{subtitle}</span>
+            </div>
+            <h3 className="font-heading text-base font-bold text-foreground mt-0.5">{title}</h3>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 mt-3 md:mt-0 shrink-0">
+          <div className="bg-background border border-border px-3 py-1 rounded font-mono text-xs font-bold text-foreground">
+            {output}
+          </div>
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-muted/50 hidden md:block"
+          >
+            <ChevronDown className="h-4 w-4" />
+          </motion.div>
+        </div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.04, 0.62, 0.23, 0.98] }}
+            className="overflow-hidden"
+          >
+            <div className="p-6 border-t border-border/60 bg-surface-hover/10 space-y-4">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 export default function MethodologyPage() {
+  const [openStages, setOpenStages] = useState({
+    1: true,
+    2: false,
+    3: false,
+    4: false,
+    5: false,
+    6: false,
+    7: false
+  });
+
+  const toggleStage = (num) => {
+    setOpenStages(prev => ({
+      ...prev,
+      [num]: !prev[num]
+    }));
+  };
+
+  const expandAll = () => {
+    setOpenStages({
+      1: true,
+      2: true,
+      3: true,
+      4: true,
+      5: true,
+      6: true,
+      7: true
+    });
+  };
+
+  const collapseAll = () => {
+    setOpenStages({
+      1: false,
+      2: false,
+      3: false,
+      4: false,
+      5: false,
+      6: false,
+      7: false
+    });
+  };
+
   return (
-    <motion.main {...pageEnter} className="mx-auto max-w-5xl space-y-16 px-4 py-10">
-      <div className="text-center">
-        <h1 className="font-heading text-3xl font-bold text-foreground">How the ranker works</h1>
-        <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-400">
-          Six layers trade breadth for precision: fast approximate methods sweep 100,000
-          profiles, expensive accurate methods judge the survivors, and hard safety gates
-          guard the final list. CPU-only, fully offline, byte-for-byte deterministic.
+    <motion.main {...pageEnter} className="mx-auto max-w-4xl px-4 py-12 space-y-8">
+      {/* Title */}
+      <div className="text-center space-y-3">
+        <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground">Interactive AI Pipeline Narrative</h1>
+        <p className="mx-auto max-w-2xl text-sm text-muted font-body">
+          Explore the seven sequential stages of the Redrob Candidate Ranker. Fast, CPU-only approximate filters sweep 100K profiles, deep joint-attention Cross-encoders score the survivors, and hard safety gates audit the final Top 100 output.
         </p>
+
+        <div className="pt-2 flex justify-center gap-3">
+          <button
+            type="button"
+            onClick={expandAll}
+            className="cursor-pointer text-xs font-semibold text-primary hover:underline focus:outline-none"
+          >
+            Expand All Stages
+          </button>
+          <span className="text-muted/40 font-light">|</span>
+          <button
+            type="button"
+            onClick={collapseAll}
+            className="cursor-pointer text-xs font-semibold text-primary hover:underline focus:outline-none"
+          >
+            Collapse All Stages
+          </button>
+        </div>
       </div>
 
-      <section>
-        <Reveal>
-          <SectionHeading
-            icon={Layers}
-            title="The six-layer funnel"
-            sub="Each layer only pays its cost on what the previous layer let through."
-          />
-        </Reveal>
-        <ol className="relative space-y-4 border-l border-border pl-6">
-          {LAYERS.map((l, i) => (
-            <Reveal key={l.id} delay={i * 0.04}>
-              <li className="relative">
-                <span
-                  className="absolute -left-[31px] top-1 flex h-2.5 w-2.5 rounded-full
-                             bg-secondary shadow-glow-sm"
-                  aria-hidden="true"
-                />
-                <div className="glass hover-lift rounded-xl border border-border p-4">
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <span className="font-heading text-xs font-bold text-secondary">{l.id}</span>
-                    <h3 className="font-heading text-sm font-semibold text-foreground">
-                      {l.title}
-                    </h3>
-                    <span className="ml-auto font-heading text-xs text-slate-500">{l.out}</span>
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-400">{l.body}</p>
-                </div>
-              </li>
-            </Reveal>
-          ))}
-        </ol>
-      </section>
+      <div className="relative pt-4">
+        {/* Stage 1: Candidate Pool */}
+        <PipelineStage
+          number="1"
+          title="Candidate Pool (Initial Database)"
+          icon={Database}
+          subtitle="Input corpus of raw candidate profiles"
+          output="100,000 Profiles"
+          isOpen={openStages[1]}
+          onToggle={() => toggleStage(1)}
+        >
+          <p className="text-body-sm leading-relaxed text-muted font-medium">
+            The initial, unstructured labor market database containing all indexed candidates. Each candidate profile includes self-declared skills, education credentials, career history duration, and behavioral indicators.
+          </p>
+          <div className="rounded-lg border border-border bg-background p-4 flex items-center justify-between">
+            <span className="text-[10px] font-mono font-bold uppercase text-muted/70">Database Source</span>
+            <span className="font-mono text-xs font-bold text-foreground">candidates.jsonl (100K entries)</span>
+          </div>
+        </PipelineStage>
 
-      <section>
-        <Reveal>
-          <SectionHeading
-            icon={Calculator}
-            title="The composite score"
-            sub="base = Σ weighted parts ± adjustments, clamped to [0, 1] — then scaled by attainability."
-          />
-        </Reveal>
-        <Reveal>
-          <div className="rounded-lg border border-border bg-surface p-5">
-            <div className="space-y-2.5">
-              {WEIGHTS.map(({ key, label, w }) => (
-                <div key={key} className="flex items-center gap-3 text-sm">
-                  <span className="w-32 shrink-0 text-slate-400">{label}</span>
-                  <div className="h-3 flex-1 overflow-hidden rounded-sm bg-muted">
-                    <motion.div
-                      className="h-full rounded-sm"
-                      style={{ backgroundColor: PART_COLORS[key] }}
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${(w / 0.3) * 100}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.6, ease: 'easeOut' }}
-                    />
+        <Connector countReduction="Filter −95,000" />
+
+        {/* Stage 2: Semantic Retrieval */}
+        <PipelineStage
+          number="2"
+          title="Semantic Retrieval (FAISS Dense Search)"
+          icon={Search}
+          subtitle="Fast approximate nearest neighbor vector search"
+          output="5,000 Profiles"
+          isOpen={openStages[2]}
+          onToggle={() => toggleStage(2)}
+        >
+          <p className="text-body-sm leading-relaxed text-muted font-medium">
+            Exact inner-product search over L2-normalized 384-dimensional career text embeddings (<code className="text-primary font-mono text-xs">all-MiniLM-L6-v2</code>) against the job description embedding. FAISS index scan runs in ~10 ms, filtering out 95% of irrelevant candidates early.
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="border border-border bg-background rounded p-3 text-center">
+              <span className="block text-[9px] font-mono uppercase text-muted/70">Embedding Model</span>
+              <span className="block text-body-sm font-bold text-foreground mt-0.5 font-mono">MiniLM-L6-v2</span>
+            </div>
+            <div className="border border-border bg-background rounded p-3 text-center">
+              <span className="block text-[9px] font-mono uppercase text-muted/70">FAISS Search Speed</span>
+              <span className="block text-body-sm font-bold text-success mt-0.5 font-mono">~10 ms</span>
+            </div>
+          </div>
+        </PipelineStage>
+
+        <Connector countReduction="Filter −4,500" />
+
+        {/* Stage 3: Hybrid Fusion */}
+        <PipelineStage
+          number="3"
+          title="Hybrid Fusion (Reciprocal Rank Fusion)"
+          icon={Layers}
+          subtitle="Fusing semantic vectors with lexical BM25 scores"
+          output="500 Profiles"
+          isOpen={openStages[3]}
+          onToggle={() => toggleStage(3)}
+        >
+          <p className="text-body-sm leading-relaxed text-muted font-medium">
+            Applies Reciprocal Rank Fusion (weighted 70% semantic, 30% lexical, constant <code className="text-primary font-mono text-xs">k=60</code>). This rank-based fusion prevents score-scale mismatch, ensuring candidates with matching exact keywords and strong semantic backgrounds are surfaced.
+          </p>
+          <div className="border border-border bg-background rounded-lg p-4 space-y-2">
+            <span className="text-[10px] font-mono font-bold uppercase text-muted/70 block">RRF Fusion Formula & Weights</span>
+            <div className="flex h-3.5 overflow-hidden rounded-sm bg-muted">
+              <div className="h-full bg-primary" style={{ width: '70%' }} title="70% Semantic Weight" />
+              <div className="h-full bg-info" style={{ width: '30%' }} title="30% Lexical Weight" />
+            </div>
+            <div className="flex justify-between text-[10px] font-mono text-muted/80">
+              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm bg-primary" /> 70% Semantic (Vector match)</span>
+              <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm bg-info" /> 30% Lexical (BM25 Keyword search)</span>
+            </div>
+          </div>
+        </PipelineStage>
+
+        <Connector countReduction="Filter −300" />
+
+        {/* Stage 4: Cross-Encoder */}
+        <PipelineStage
+          number="4"
+          title="Cross-Encoder Re-ranking (Deep Attention)"
+          icon={Cpu}
+          subtitle="Heavy joint-attention transformer scoring"
+          output="200 Profiles"
+          isOpen={openStages[4]}
+          onToggle={() => toggleStage(4)}
+        >
+          <p className="text-body-sm leading-relaxed text-muted font-medium">
+            The Joint-attention Cross-Encoder model (<code className="text-primary font-mono text-xs">ms-marco-MiniLM-L-6-v2</code>) evaluates candidate career descriptions jointly against the Job Description query. It is highly accurate but computationally expensive (taking ~80% of total pipeline run time).
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="border border-border bg-background rounded p-3 text-center">
+              <span className="block text-[9px] font-mono uppercase text-muted/70">Re-ranking Model</span>
+              <span className="block text-body-sm font-bold text-foreground mt-0.5 font-mono">ms-marco-MiniLM-L-6-v2</span>
+            </div>
+            <div className="border border-border bg-background rounded p-3 text-center">
+              <span className="block text-[9px] font-mono uppercase text-muted/70">Time Share</span>
+              <span className="block text-body-sm font-bold text-warning mt-0.5 font-mono">~80% Pipeline Cost</span>
+            </div>
+          </div>
+        </PipelineStage>
+
+        <Connector countReduction="Filter −50" />
+
+        {/* Stage 5: Composite Scoring */}
+        <PipelineStage
+          number="5"
+          title="Interpretable Composite Scoring"
+          icon={Calculator}
+          subtitle="Multi-criteria weighted formula + adjustments"
+          output="150 Profiles"
+          isOpen={openStages[5]}
+          onToggle={() => toggleStage(5)}
+        >
+          <p className="text-body-sm leading-relaxed text-muted font-medium">
+            Calculates the base match score using a transparent weighted formula over five criteria families: Career Quality, Semantic Fit, Skill Match, Assessments, and Experience Fit. Adjusts scores dynamically based on trajectory, consistency, and anti-fit penalties.
+          </p>
+          <div className="border border-border bg-background rounded-lg p-5 space-y-4">
+            <span className="text-[10px] font-mono font-bold uppercase text-muted/70 block">Five Core Scoring Criteria Weights</span>
+            <div className="space-y-3">
+              {[
+                { label: 'Career Quality (Company / Institution prestige)', w: 0.30, key: 'career' },
+                { label: 'Semantic Fit (JD Contextual matching)', w: 0.25, key: 'semantic' },
+                { label: 'Skill Match (Required JD Stack density)', w: 0.20, key: 'skill' },
+                { label: 'Verified Assessments (Hard testing scores)', w: 0.15, key: 'assessment' },
+                { label: 'Experience Fit (Target YOE & Location)', w: 0.10, key: 'experience' }
+              ].map(({ label, w, key }) => (
+                <div key={key} className="space-y-1">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="text-muted/90">{label}</span>
+                    <span className="font-mono text-foreground">{w * 100}%</span>
                   </div>
-                  <span className="w-12 shrink-0 text-right font-heading text-slate-300">
-                    {w.toFixed(2)}
-                  </span>
+                  <div className="h-2 overflow-hidden rounded bg-surface border border-border/40">
+                    <div className="h-full rounded-sm" style={{ width: `${w * 100}%`, backgroundColor: PART_COLORS[key] }} />
+                  </div>
                 </div>
               ))}
             </div>
-            <div className="mt-4 grid gap-2 border-t border-border pt-4 text-xs text-slate-400 sm:grid-cols-2">
-              <div>Trajectory adjustment: <span className="font-heading text-slate-300">−0.05 / 0 / +0.05</span></div>
-              <div>Summary↔career consistency: <span className="font-heading text-slate-300">±0.03</span></div>
-              <div>Anti-fit anchor penalty: <span className="font-heading text-slate-300">−0.05 / −0.10</span></div>
-              <div>Availability multiplier: <span className="font-heading text-slate-300">× 0.10 – 1.25</span></div>
-              <div>Disqualified: <span className="font-heading text-red-400">× 0.05</span></div>
-              <div>Honeypot: <span className="font-heading text-red-400">× 0.0 — eliminated</span></div>
+            
+            <div className="pt-3 border-t border-border/40 grid grid-cols-2 gap-3 text-caption text-muted/80 font-mono">
+              <div>Trajectory Boost/Penalty: <span className="text-foreground font-semibold">±0.05</span></div>
+              <div>Profile Consistency: <span className="text-foreground font-semibold">±0.03</span></div>
+              <div>Consultant Anchor Penalty: <span className="text-danger font-semibold">−0.10</span></div>
+              <div>Availability Multiplier: <span className="text-success font-semibold">0.10x – 1.25x</span></div>
             </div>
           </div>
-        </Reveal>
-      </section>
+        </PipelineStage>
 
-      <section>
-        <Reveal>
-          <SectionHeading
-            icon={ShieldCheck}
-            title="Fraud detection"
-            sub="The dataset plants fraudulent profiles; ranking one in the top 100 is heavily penalized. Missing fields are treated as no signal — they never raise a flag."
-          />
-        </Reveal>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {HONEYPOT_CHECKS.map((c, i) => (
-            <Reveal key={c.title} delay={i * 0.04}>
-              <div className="glass rounded-xl border border-border p-4">
-                <h3 className="flex items-center gap-2 font-heading text-sm font-semibold text-red-400">
-                  <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-                  {c.title}
-                </h3>
-                <p className="mt-1.5 text-sm text-slate-400">{c.body}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
-          {DQ_CHECKS.map((c, i) => (
-            <Reveal key={c.title} delay={i * 0.04}>
-              <div className="glass rounded-xl border border-border p-4">
-                <h3 className="flex items-center gap-2 font-heading text-sm font-semibold text-amber-400">
-                  <Ban className="h-4 w-4" aria-hidden="true" />
-                  {c.title}
-                </h3>
-                <p className="mt-1.5 text-sm text-slate-400">{c.body}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+        <Connector countReduction="Filter −50" />
 
-      <section>
-        <Reveal>
-          <SectionHeading
-            icon={Lock}
-            title="Guarantees"
-            sub="Constraints the pipeline is verified against on every run."
-          />
-        </Reveal>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {[
-            {
-              icon: Timer,
-              title: '~11 s, CPU-only',
-              body: 'Well inside the 300 s budget — measured 11.2 s clean, ~87 s under heavy machine load.',
-            },
-            {
-              icon: Lock,
-              title: 'Fully offline',
-              body: 'HF_HUB_OFFLINE enforced before any model import; zero network calls at rank time.',
-            },
-            {
-              icon: ShieldCheck,
-              title: 'Deterministic',
-              body: 'No unseeded randomness anywhere — two fresh runs produce byte-identical CSVs.',
-            },
-          ].map((g, i) => (
-            <Reveal key={g.title} delay={i * 0.04}>
-              <div className="glass hover-lift rounded-xl border border-border p-4 text-center">
-                <g.icon className="mx-auto mb-2 h-5 w-5 text-secondary" aria-hidden="true" />
-                <h3 className="font-heading text-sm font-semibold text-foreground">{g.title}</h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-slate-400">{g.body}</p>
+        {/* Stage 6: Safety Filters */}
+        <PipelineStage
+          number="6"
+          title="Safety Filters & Assessment Gates"
+          icon={ShieldCheck}
+          subtitle="Integrity checks and disqualification rules"
+          output="100 Profiles"
+          isOpen={openStages[6]}
+          onToggle={() => toggleStage(6)}
+        >
+          <p className="text-body-sm leading-relaxed text-muted font-medium">
+            Applies zero-tolerance gates: checks for skill-duration fraud, impossible overlapping timelines, and assessment contradictions. Disqualified profiles and Honeypots are filtered out, demoted, or replaced by clean backup candidates.
+          </p>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Honeypot traps */}
+            <div className="border border-border/60 bg-danger/5 rounded-lg p-4 space-y-2">
+              <div className="flex items-center gap-1.5">
+                <AlertTriangle className="h-4 w-4 text-danger shrink-0" />
+                <span className="text-[10px] font-mono font-bold uppercase text-danger">Honeypot Traps (Auto-Eliminated)</span>
               </div>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+              <ul className="space-y-1.5 text-caption text-muted">
+                <li>• **Skill Fraud**: claiming expert skills with under 3m history.</li>
+                <li>• **Contradiction**: claiming expert status but scoring &lt;25 on assessment.</li>
+                <li>• **Inflation**: careers months represent less than 35% of total YoE.</li>
+                <li>• **Overlap**: two full-time roles overlapping by more than 6 months.</li>
+              </ul>
+            </div>
+
+            {/* Disqualifiers */}
+            <div className="border border-border/60 bg-warning/5 rounded-lg p-4 space-y-2">
+              <div className="flex items-center gap-1.5">
+                <Ban className="h-4 w-4 text-warning shrink-0" />
+                <span className="text-[10px] font-mono font-bold uppercase text-warning">Disqualification Filters (Match demoted)</span>
+              </div>
+              <ul className="space-y-1.5 text-caption text-muted">
+                <li>• **IT-Services**: profile consisting solely of services-firm consultation.</li>
+                <li>• **Title Chaser**: short stints (&lt;18m) with constant title escalation.</li>
+                <li>• **Wrong Spec**: pure Computer Vision CV profile with zero NLP/IR matching.</li>
+              </ul>
+            </div>
+          </div>
+        </PipelineStage>
+
+        <Connector countReduction="Output" />
+
+        {/* Stage 7: Final Top 100 */}
+        <PipelineStage
+          number="7"
+          title="Final Top 100 Pipeline"
+          icon={CheckCircle2}
+          subtitle="Audited, ranked candidate dossier output"
+          output="Top 100 Ranked"
+          isOpen={openStages[7]}
+          onToggle={() => toggleStage(7)}
+        >
+          <p className="text-body-sm leading-relaxed text-muted font-medium">
+            The final, deterministic, audited candidate pipeline rendered on the main Candidates dashboard. Ready for recruiter review, comparison, shortlisting, and outreach.
+          </p>
+          
+          <div className="border border-border bg-background rounded-lg p-5 space-y-4">
+            <span className="text-[10px] font-mono font-bold uppercase text-muted/70 block">Verified Pipeline Guarantees</span>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="bg-surface border border-border/40 rounded p-3 text-center space-y-1">
+                <Timer className="h-4 w-4 text-primary mx-auto" />
+                <span className="block text-[10px] font-bold text-foreground leading-tight">Fast Execution</span>
+                <span className="block text-[9px] text-muted font-mono leading-none">~11.2 s CPU</span>
+              </div>
+              <div className="bg-surface border border-border/40 rounded p-3 text-center space-y-1">
+                <Lock className="h-4 w-4 text-primary mx-auto" />
+                <span className="block text-[10px] font-bold text-foreground leading-tight">Fully Offline</span>
+                <span className="block text-[9px] text-muted font-mono leading-none">HF_HUB_OFFLINE</span>
+              </div>
+              <div className="bg-surface border border-border/40 rounded p-3 text-center space-y-1">
+                <CheckCircle2 className="h-4 w-4 text-success mx-auto" />
+                <span className="block text-[10px] font-bold text-foreground leading-tight">Deterministic</span>
+                <span className="block text-[9px] text-muted font-mono leading-none">Seeded Randomness</span>
+              </div>
+            </div>
+          </div>
+        </PipelineStage>
+      </div>
     </motion.main>
   );
 }

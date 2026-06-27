@@ -10,38 +10,31 @@ export default function CompareTray({ ids, onClear }) {
     <AnimatePresence>
       {ids.length >= 1 && (
         <motion.div
-          initial={{ y: 80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 80, opacity: 0 }}
-          transition={{ type: 'spring', damping: 26, stiffness: 300 }}
-          className="fixed bottom-6 left-1/2 z-30 -translate-x-1/2"
+          initial={{ y: 80, opacity: 0, x: '-50%' }}
+          animate={{ y: 0, opacity: 1, x: '-50%' }}
+          exit={{ y: 80, opacity: 0, x: '-50%' }}
+          transition={{ type: 'spring', damping: 24, stiffness: 280 }}
+          className="fixed bottom-6 left-1/2 z-30"
         >
-          <div className="glass-strong flex items-center gap-3 rounded-full border border-border
-                          py-2 pl-5 pr-2 shadow-glow">
-            <span className="font-heading text-xs text-slate-300">
+          <div className="bg-surface flex items-center gap-4.5 rounded border border-border py-2.5 pl-5 pr-2.5 shadow-lg">
+            <span className="font-heading text-xs font-semibold text-primary">
               {ids.length} selected
-              <span className="text-slate-500"> / 3</span>
+              <span className="text-muted font-medium"> / 3</span>
             </span>
             <button
               type="button"
               onClick={() => navigate(`/compare?ids=${ids.join(',')}`)}
               disabled={ids.length < 2}
-              className="flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-1.5
-                         text-sm font-medium text-on-primary transition-all duration-200
-                         hover:bg-blue-800 hover:shadow-glow focus:outline-none
-                         focus-visible:ring-2 focus-visible:ring-ring
-                         disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex cursor-pointer items-center gap-2 rounded bg-primary hover:bg-primary/90 text-white font-semibold text-xs px-4.5 py-2 transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.97]"
             >
               <GitCompareArrows className="h-4 w-4" aria-hidden="true" />
-              Compare
+              <span>Compare candidates</span>
             </button>
             <button
               type="button"
               onClick={onClear}
               aria-label="Clear selection"
-              className="cursor-pointer rounded-full p-1.5 text-slate-500 transition-colors
-                         duration-150 hover:bg-surface-hover hover:text-slate-300
-                         focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="cursor-pointer rounded p-1.5 text-muted transition-colors duration-150 hover:bg-surface-hover hover:text-primary focus:outline-none"
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>

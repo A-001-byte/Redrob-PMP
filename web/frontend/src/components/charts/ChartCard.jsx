@@ -1,25 +1,25 @@
-/** Shared dark-theme chart chrome: card shell, axis/grid constants, and a
- *  dark tooltip (recharts' default tooltip is white). */
+/** Shared theme-aware chart chrome: card shell, axis/grid constants, and a
+ *  theme-aware tooltip. */
 
-export const AXIS_TICK = { fill: '#94A3B8', fontSize: 11, fontFamily: '"Fira Code", monospace' };
-export const GRID_STROKE = '#1E293B';
-export const CURSOR_FILL = { fill: 'rgba(96, 165, 250, 0.08)' };
+export const AXIS_TICK = { fill: '#8B8D98', fontSize: 11, fontFamily: '"JetBrains Mono", monospace' };
+export const GRID_STROKE = 'var(--border)';
+export const CURSOR_FILL = { fill: '#8B8D98', fillOpacity: 0.15 };
 
 export function DarkTooltip({ active, payload, label, formatter }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-md border border-border bg-surface-hover px-3 py-2 text-xs shadow-lg">
+    <div className="rounded border border-border bg-surface px-4 py-2.5 text-xs shadow-sm">
       {label !== undefined && (
-        <div className="mb-1 font-heading font-medium text-slate-300">{label}</div>
+        <div className="mb-1.5 font-heading font-bold text-foreground">{label}</div>
       )}
       {payload.map((p) => (
-        <div key={p.dataKey ?? p.name} className="flex items-center gap-2 py-0.5">
+        <div key={p.dataKey ?? p.name} className="flex items-center gap-2 py-0.5 font-mono">
           <span
-            className="h-2 w-2 shrink-0 rounded-sm"
+            className="h-2 w-2 shrink-0 rounded-full"
             style={{ backgroundColor: p.color ?? p.payload?.fill }}
           />
-          <span className="text-slate-400">{p.name}</span>
-          <span className="ml-auto pl-3 font-heading text-slate-200">
+          <span className="text-muted">{p.name}</span>
+          <span className="ml-auto pl-3 font-semibold text-foreground">
             {formatter ? formatter(p.value, p) : p.value}
           </span>
         </div>
@@ -30,11 +30,11 @@ export function DarkTooltip({ active, payload, label, formatter }) {
 
 export default function ChartCard({ title, insight, children }) {
   return (
-    <div className="rounded-lg border border-border bg-surface px-4 py-3">
-      <h3 className="mb-1 font-heading text-xs font-semibold uppercase tracking-wide text-foreground">
+    <div className="rounded border border-border bg-surface px-5 py-4 shadow-sm">
+      <h3 className="mb-1 font-heading text-sm font-bold tracking-tight text-foreground">
         {title}
       </h3>
-      {insight && <p className="mb-3 text-xs text-slate-500">{insight}</p>}
+      {insight && <p className="mb-4 text-xs text-muted font-body">{insight}</p>}
       {children}
     </div>
   );

@@ -3,9 +3,11 @@ import { Route, Routes } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import { DataProvider } from './context/DataContext.jsx';
 import { ShortlistProvider } from './context/ShortlistContext.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
 import Layout from './layout/Layout.jsx';
 import OverviewPage from './pages/OverviewPage.jsx';
 import CandidatesPage from './pages/CandidatesPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
 
 // Heavy chart bundle (recharts) and the static story page load on demand.
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage.jsx'));
@@ -17,7 +19,7 @@ function PageFallback() {
   return (
     <div className="mx-auto max-w-7xl space-y-4 px-4 py-6">
       {Array.from({ length: 3 }, (_, i) => (
-        <div key={i} className="h-48 animate-pulse rounded-lg border border-border bg-muted" />
+        <div key={i} className="h-48 animate-skeleton rounded border border-border bg-surface/30" />
       ))}
     </div>
   );
@@ -26,49 +28,55 @@ function PageFallback() {
 export default function App() {
   return (
     <MotionConfig reducedMotion="user">
-      <DataProvider>
-        <ShortlistProvider>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route index element={<OverviewPage />} />
-            <Route path="candidates" element={<CandidatesPage />} />
-            <Route
-              path="compare"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <ComparePage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="analytics"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <AnalyticsPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="talent-market"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <TalentMarketPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="methodology"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <MethodologyPage />
-                </Suspense>
-              }
-            />
-            <Route path="*" element={<OverviewPage />} />
-          </Route>
-        </Routes>
-        </ShortlistProvider>
-      </DataProvider>
+      <AuthProvider>
+        <DataProvider>
+          <ShortlistProvider>
+            <Routes>
+              {/* Unprotected Login route (no Layout wrapping) */}
+              <Route path="login" element={<LoginPage />} />
+
+              {/* Protected Workspace Layout routes */}
+              <Route element={<Layout />}>
+                <Route index element={<OverviewPage />} />
+                <Route path="candidates" element={<CandidatesPage />} />
+                <Route
+                  path="compare"
+                  element={
+                    <Suspense fallback={<PageFallback />}>
+                      <ComparePage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="analytics"
+                  element={
+                    <Suspense fallback={<PageFallback />}>
+                      <AnalyticsPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="talent-market"
+                  element={
+                    <Suspense fallback={<PageFallback />}>
+                      <TalentMarketPage />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="methodology"
+                  element={
+                    <Suspense fallback={<PageFallback />}>
+                      <MethodologyPage />
+                    </Suspense>
+                  }
+                />
+                <Route path="*" element={<OverviewPage />} />
+              </Route>
+            </Routes>
+          </ShortlistProvider>
+        </DataProvider>
+      </AuthProvider>
     </MotionConfig>
   );
 }
