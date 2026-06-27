@@ -119,13 +119,17 @@ export default function TalentMarketPage() {
     const competitionScore = 100 - ((openToWork + shortNotice) / 2);
     const competitionRating = competitionScore > 80 ? 'Extreme' : competitionScore > 65 ? 'High' : 'Moderate';
     const competitionColor = competitionScore > 80 ? 'text-danger' : competitionScore > 65 ? 'text-warning' : 'text-success';
+    const seniorCount = yoe_distribution
+      .filter((band) => !band.band.startsWith('<') && !band.band.startsWith('2–5'))
+      .reduce((sum, band) => sum + band.count, 0);
 
     return {
       regionStats,
       skillScarcity,
       competitionScore,
       competitionRating,
-      competitionColor
+      competitionColor,
+      seniorPct: `${pool.qualified > 0 ? ((seniorCount / pool.qualified) * 100).toFixed(0) : 0}%`
     };
   }, [data, selectedRegion]);
 
@@ -232,28 +236,76 @@ export default function TalentMarketPage() {
               <path d="M140,205 L170,235" stroke="var(--primary)" strokeWidth="1" strokeDasharray="3 3" className="opacity-40" />
 
               {/* Noida Node */}
-              <g className="cursor-pointer group" onClick={() => setSelectedRegion('Noida')}>
+              <g
+                className="cursor-pointer group"
+                role="button"
+                tabIndex={0}
+                aria-pressed={selectedRegion === 'Noida'}
+                onClick={() => setSelectedRegion('Noida')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedRegion('Noida');
+                  }
+                }}
+              >
                 <circle cx="190" cy="95" r="14" className={`transition-all duration-300 ${selectedRegion === 'Noida' ? 'fill-primary/20 stroke-primary stroke-2' : 'fill-background stroke-muted hover:stroke-primary'}`} />
                 <circle cx="190" cy="95" r="4" className={`transition-all duration-300 ${selectedRegion === 'Noida' ? 'fill-primary animate-pulse' : 'fill-muted group-hover:fill-primary'}`} />
                 <text x="210" y="99" className={`text-[10px] font-mono font-bold tracking-wider ${selectedRegion === 'Noida' ? 'fill-primary' : 'fill-muted hover:fill-foreground'}`}>NOIDA (NCR)</text>
               </g>
 
               {/* Pune Node */}
-              <g className="cursor-pointer group" onClick={() => setSelectedRegion('Pune')}>
+              <g
+                className="cursor-pointer group"
+                role="button"
+                tabIndex={0}
+                aria-pressed={selectedRegion === 'Pune'}
+                onClick={() => setSelectedRegion('Pune')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedRegion('Pune');
+                  }
+                }}
+              >
                 <circle cx="140" cy="205" r="14" className={`transition-all duration-300 ${selectedRegion === 'Pune' ? 'fill-primary/20 stroke-primary stroke-2' : 'fill-background stroke-muted hover:stroke-primary'}`} />
                 <circle cx="140" cy="205" r="4" className={`transition-all duration-300 ${selectedRegion === 'Pune' ? 'fill-primary animate-pulse' : 'fill-muted group-hover:fill-primary'}`} />
                 <text x="95" y="209" className={`text-[10px] font-mono font-bold tracking-wider text-right ${selectedRegion === 'Pune' ? 'fill-primary' : 'fill-muted hover:fill-foreground'}`}>PUNE</text>
               </g>
 
               {/* Other India Node */}
-              <g className="cursor-pointer group" onClick={() => setSelectedRegion('Other India')}>
+              <g
+                className="cursor-pointer group"
+                role="button"
+                tabIndex={0}
+                aria-pressed={selectedRegion === 'Other India'}
+                onClick={() => setSelectedRegion('Other India')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedRegion('Other India');
+                  }
+                }}
+              >
                 <circle cx="170" cy="235" r="14" className={`transition-all duration-300 ${selectedRegion === 'Other India' ? 'fill-primary/20 stroke-primary stroke-2' : 'fill-background stroke-muted hover:stroke-primary'}`} />
                 <circle cx="170" cy="235" r="4" className={`transition-all duration-300 ${selectedRegion === 'Other India' ? 'fill-primary animate-pulse' : 'fill-muted group-hover:fill-primary'}`} />
                 <text x="190" y="239" className={`text-[10px] font-mono font-bold tracking-wider ${selectedRegion === 'Other India' ? 'fill-primary' : 'fill-muted hover:fill-foreground'}`}>SOUTHERN HUBS</text>
               </g>
 
               {/* International Node */}
-              <g className="cursor-pointer group" onClick={() => setSelectedRegion('International')}>
+              <g
+                className="cursor-pointer group"
+                role="button"
+                tabIndex={0}
+                aria-pressed={selectedRegion === 'International'}
+                onClick={() => setSelectedRegion('International')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedRegion('International');
+                  }
+                }}
+              >
                 <rect x="280" y="180" width="90" height="34" rx="4" className={`transition-all duration-300 ${selectedRegion === 'International' ? 'fill-primary/10 stroke-primary stroke-2' : 'fill-background border-border stroke-muted hover:stroke-primary'}`} />
                 <circle cx="295" cy="197" r="4" className={`transition-all duration-300 ${selectedRegion === 'International' ? 'fill-primary animate-pulse' : 'fill-muted group-hover:fill-primary'}`} />
                 <text x="308" y="201" className={`text-[10px] font-mono font-bold tracking-wider ${selectedRegion === 'International' ? 'fill-primary' : 'fill-muted hover:fill-foreground'}`}>GLOBAL</text>

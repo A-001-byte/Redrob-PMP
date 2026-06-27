@@ -30,10 +30,6 @@ const PAGE_TITLES = {
 
 export default function Layout() {
   const { user } = useAuth();
-  
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
 
   const { rerank, loadError } = useData();
   const { drawerId, closeDrawer } = useDrawer();
@@ -98,6 +94,10 @@ export default function Layout() {
       (word) => word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   };
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className={`flex min-h-screen bg-background text-foreground font-body overflow-x-hidden transition-colors duration-200 ${

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, SlidersHorizontal, Sparkles, TrendingUp, CheckCircle2 } from 'lucide-react';
 
@@ -10,11 +10,22 @@ export default function RecalibrateModal({ isOpen, onClose }) {
   });
   const [yoeToggle, setYoeToggle] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
+  const timeoutRef = useRef(null);
+
+  useEffect(() => () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  }, []);
+
+  const handleClose = () => {
+    if (isApplying) return;
+    onClose();
+  };
 
   const handleApply = () => {
+    if (isApplying) return;
     setIsApplying(true);
     // Simulate API call
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setIsApplying(false);
       onClose();
     }, 1500);
@@ -28,7 +39,7 @@ export default function RecalibrateModal({ isOpen, onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose}
+            onClick={handleClose}
           className="fixed inset-0 z-[110] flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm"
       >
         <motion.div
@@ -53,7 +64,7 @@ export default function RecalibrateModal({ isOpen, onClose }) {
               </p>
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="rounded-md p-1.5 text-muted hover:bg-surface-hover hover:text-foreground transition-colors"
             >
               <X className="h-5 w-5" />
@@ -64,9 +75,16 @@ export default function RecalibrateModal({ isOpen, onClose }) {
             {/* Targeted Fix */}
             <div className="rounded-md border border-warning/20 bg-warning/5 p-4 flex items-start gap-4">
               <div className="mt-0.5">
-                <div className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-colors ${yoeToggle ? 'bg-warning' : 'bg-surface-hover border border-border'}`} onClick={() => setYoeToggle(!yoeToggle)}>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={yoeToggle}
+                  aria-label='Down-weight "Years of Experience"'
+                  onClick={() => setYoeToggle(!yoeToggle)}
+                  className={`relative inline-flex h-5 w-9 cursor-pointer items-center rounded-full transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/40 ${yoeToggle ? 'bg-warning' : 'bg-surface-hover border border-border'}`}
+                >
                   <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${yoeToggle ? 'translate-x-5' : 'translate-x-1'}`} />
-                </div>
+                </button>
               </div>
               <div>
                 <p className="text-body-sm font-semibold text-foreground">Down-weight "Years of Experience"</p>
@@ -121,7 +139,7 @@ export default function RecalibrateModal({ isOpen, onClose }) {
           {/* Footer */}
           <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4 bg-surface/50">
             <button
-              onClick={onClose}
+              onClick={handleClose}
               disabled={isApplying}
               className="rounded px-4 py-2 text-body-sm font-semibold text-muted hover:text-foreground transition-colors disabled:opacity-50"
             >

@@ -41,7 +41,7 @@ export default function StatusBanner({ rerank }) {
           <div className="ml-auto flex w-1/3 min-w-32 items-center gap-2">
             <div className="h-1.5 flex-1 overflow-hidden rounded bg-muted">
               <div
-                className="h-full rounded bg-primary bar-glow animate-bar-pulse transition-[width] duration-700 ease-out"
+                className="h-full rounded bg-primary animate-bar-pulse transition-[width] duration-700 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>

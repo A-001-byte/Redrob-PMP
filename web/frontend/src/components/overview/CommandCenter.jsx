@@ -55,7 +55,7 @@ export default function CommandCenter({ metrics }) {
 
   // Extract metric metrics safely
   const corpus = metrics?.funnel?.corpus ?? 100000;
-  const finalCount = metrics?.total_count || results?.candidates?.length || 0;
+  const finalCount = metrics?.total_count ?? results?.candidates?.length ?? 0;
   const rankSeconds = metrics?.last_run_time_seconds ?? 0.0;
   const honeypots = metrics?.honeypot_count ?? 0;
   const dqs = metrics?.disqualified_count ?? 0;
@@ -107,7 +107,9 @@ export default function CommandCenter({ metrics }) {
     const topTitle = metrics.title_distribution[0];
     insights.push({
       label: 'Dominant Profile',
-      value: `${topTitle.title} represents ${((topTitle.count / finalCount) * 100).toFixed(0)}% of Top 100`,
+      value: finalCount > 0
+        ? `${topTitle.title} represents ${((topTitle.count / finalCount) * 100).toFixed(0)}% of Top 100`
+        : `${topTitle.title} represents 0% of Top 100`,
       icon: Cpu,
     });
   }
@@ -201,7 +203,7 @@ export default function CommandCenter({ metrics }) {
               <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-border/40">
                 <div
                   className="h-full rounded-full bg-info/80 transition-all duration-[400ms] ease-out"
-                  style={{ width: `${Math.max(2, (finalCount / corpus) * 100)}%` }}
+                  style={{ width: corpus > 0 && finalCount > 0 ? `${Math.max(2, (finalCount / corpus) * 100)}%` : '0%' }}
                 />
               </div>
             </div>

@@ -37,11 +37,17 @@ function Connector({ countReduction }) {
 }
 
 function PipelineStage({ id, number, title, icon: Icon, subtitle, output, isOpen, onToggle, children }) {
+  const panelId = `pipeline-stage-${id}`;
+  const buttonId = `pipeline-stage-${id}-button`;
+
   return (
     <div className="border border-border bg-surface rounded-xl overflow-hidden transition-all duration-150 hover:border-border/80 shadow-sm">
       <button
+        id={buttonId}
         type="button"
         onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
         className="w-full flex flex-col md:flex-row md:items-center justify-between px-6 py-4 text-left hover:bg-surface-hover transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
       >
         <div className="flex items-center gap-4 min-w-0 flex-1">
@@ -75,6 +81,9 @@ function PipelineStage({ id, number, title, icon: Icon, subtitle, output, isOpen
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
+            id={panelId}
+            role="region"
+            aria-labelledby={buttonId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -333,10 +342,10 @@ export default function MethodologyPage() {
                 <span className="text-[10px] font-mono font-bold uppercase text-danger">Honeypot Traps (Auto-Eliminated)</span>
               </div>
               <ul className="space-y-1.5 text-caption text-muted">
-                <li>• **Skill Fraud**: claiming expert skills with under 3m history.</li>
-                <li>• **Contradiction**: claiming expert status but scoring &lt;25 on assessment.</li>
-                <li>• **Inflation**: careers months represent less than 35% of total YoE.</li>
-                <li>• **Overlap**: two full-time roles overlapping by more than 6 months.</li>
+                <li><strong>Skill Fraud</strong>: claiming expert skills with under 3m history.</li>
+                <li><strong>Contradiction</strong>: claiming expert status but scoring &lt;25 on assessment.</li>
+                <li><strong>Inflation</strong>: careers months represent less than 35% of total YoE.</li>
+                <li><strong>Overlap</strong>: two full-time roles overlapping by more than 6 months.</li>
               </ul>
             </div>
 
@@ -347,9 +356,9 @@ export default function MethodologyPage() {
                 <span className="text-[10px] font-mono font-bold uppercase text-warning">Disqualification Filters (Match demoted)</span>
               </div>
               <ul className="space-y-1.5 text-caption text-muted">
-                <li>• **IT-Services**: profile consisting solely of services-firm consultation.</li>
-                <li>• **Title Chaser**: short stints (&lt;18m) with constant title escalation.</li>
-                <li>• **Wrong Spec**: pure Computer Vision CV profile with zero NLP/IR matching.</li>
+                <li><strong>IT-Services</strong>: profile consisting solely of services-firm consultation.</li>
+                <li><strong>Title Chaser</strong>: short stints (&lt;18m) with constant title escalation.</li>
+                <li><strong>Wrong Spec</strong>: pure Computer Vision CV profile with zero NLP/IR matching.</li>
               </ul>
             </div>
           </div>

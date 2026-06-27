@@ -45,7 +45,11 @@ export default function TopTenPreview({ candidates, onSelect }) {
           variants={stagger}
           className="grid gap-4 sm:grid-cols-2"
         >
-          {top.map((c) => (
+          {top.map((c) => {
+            const safeScore = Number.isFinite(c.score) ? c.score : null;
+            const scoreValue = safeScore ?? 0;
+
+            return (
             <motion.button
               key={c.candidate_id}
               variants={fadeUp}
@@ -77,13 +81,13 @@ export default function TopTenPreview({ candidates, onSelect }) {
 
                 {/* Score badge indicator */}
                 <div className={`shrink-0 font-heading text-caption font-bold px-2.5 py-1 rounded-sm border ${
-                  c.score > 0.8 
+                  scoreValue > 0.8 
                     ? 'bg-success/10 border-success/20 text-success'
-                    : c.score >= 0.6 
+                    : scoreValue >= 0.6 
                       ? 'bg-warning/10 border-warning/20 text-warning'
                       : 'bg-destructive/10 border-destructive/20 text-destructive'
                 }`}>
-                  {fmtScore(c.score)}
+                  {fmtScore(safeScore)}
                 </div>
               </div>
 
@@ -93,12 +97,12 @@ export default function TopTenPreview({ candidates, onSelect }) {
                 <div>
                   <div className="flex justify-between text-label uppercase text-muted mb-1.5">
                     <span>Composite Score</span>
-                    <span className={scoreTextColor(c.score)}>{(c.score * 100).toFixed(1)}%</span>
+                    <span className={safeScore === null ? 'text-muted' : scoreTextColor(scoreValue)}>{safeScore === null ? '--' : (scoreValue * 100).toFixed(1)}%</span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded bg-sidebar border border-border">
                     <div
-                      className={`h-full rounded ${scoreColor(c.score)}`}
-                      style={{ width: scoreWidthPct(c.score) }}
+                      className={`h-full rounded ${safeScore === null ? 'bg-muted' : scoreColor(scoreValue)}`}
+                      style={{ width: safeScore === null ? '0%' : scoreWidthPct(scoreValue) }}
                     />
                   </div>
                 </div>
@@ -112,7 +116,8 @@ export default function TopTenPreview({ candidates, onSelect }) {
                 </div>
               </div>
             </motion.button>
-          ))}
+            );
+          })}
         </motion.div>
       )}
 

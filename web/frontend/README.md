@@ -1,5 +1,5 @@
 # Name
-### redrob-ranker-frontend
+## redrob-ranker-frontend
 
 # Synopsis
 
@@ -14,5 +14,5 @@
 # Test:
 `npm test`
 
-#License:
+# License:
 

@@ -53,8 +53,8 @@ C = {
     "border": "#E6DEC9", "destructive": "#DC2626",
     "good": "#059669", "warn": "#D97706", "low": "#0284C7",
 }
-PART_COLORS = {"semantic": "#0284C7", "career": "#5B21B6", "skill": "#059669",
-               "experience": "#D97706", "assessment": "#E55B44"}
+PART_COLORS = {"semantic": "#E55B44", "career": "#5B21B6", "skill": "#059669",
+               "experience": "#D97706", "assessment": "#059669"}
 
 st.set_page_config(page_title="Redrob Ranker", page_icon="📡", layout="wide")
 

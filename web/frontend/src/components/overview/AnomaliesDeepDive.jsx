@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle, ShieldAlert, Activity, FileDown, SlidersHorizontal, Info } from 'lucide-react';
 import { fadeUp } from '../motion/presets.js';
@@ -39,6 +40,9 @@ const MOCK_ANOMALIES = [
 ];
 
 export default function AnomaliesDeepDive({ isOpen, onClose, onRecalibrate }) {
+  const [selectedAnomalyId, setSelectedAnomalyId] = useState(MOCK_ANOMALIES[0]?.id ?? null);
+  const selectedAnomaly = MOCK_ANOMALIES.find((anom) => anom.id === selectedAnomalyId) ?? MOCK_ANOMALIES[0] ?? null;
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -111,8 +115,12 @@ export default function AnomaliesDeepDive({ isOpen, onClose, onRecalibrate }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {MOCK_ANOMALIES.map((anom, i) => (
-                      <tr key={i} className="border-t border-border bg-surface hover:bg-surface-hover/30 transition-colors">
+                    {MOCK_ANOMALIES.map((anom) => (
+                      <tr
+                        key={anom.id}
+                        onClick={() => setSelectedAnomalyId(anom.id)}
+                        className={`border-t border-border bg-surface hover:bg-surface-hover/30 transition-colors cursor-pointer ${selectedAnomaly?.id === anom.id ? 'bg-surface-hover/40' : ''}`}
+                      >
                         <td className="px-4 py-3">
                           {anom.severity === 'critical' ? (
                             <span className="flex w-fit items-center gap-1.5 rounded bg-danger/10 px-2 py-1 text-data-sm text-danger font-mono">
@@ -149,35 +157,41 @@ export default function AnomaliesDeepDive({ isOpen, onClose, onRecalibrate }) {
                   <AlertTriangle className="h-3 w-3" />
                   <span>Active Investigation</span>
                 </div>
-                <h3 className="mb-2 text-heading-sm font-bold text-foreground">Score Drift Detected</h3>
-                <p className="mb-6 text-body-sm text-muted">Model is heavily weighting "Years of Experience" over "Technical Proficiency" for recent cohorts.</p>
+                <h3 className="mb-2 text-heading-sm font-bold text-foreground">{selectedAnomaly?.type ?? 'Investigation'}</h3>
+                <p className="mb-6 text-body-sm text-muted">{selectedAnomaly?.desc ?? 'No anomaly selected.'}</p>
 
                 <div className="mb-4 space-y-1">
                   <span className="text-label text-muted">Root Cause Hypothesis</span>
                   <p className="rounded border border-border bg-background p-3 text-body-sm text-foreground">
-                    Recent ingest included 500+ senior profiles, skewing baseline distribution curves.
+                    {selectedAnomaly?.hypothesis ?? 'No hypothesis available.'}
                   </p>
                 </div>
 
                 <div className="space-y-1">
                   <span className="text-label text-muted">Impact Assessment</span>
                   <p className="rounded border border-border bg-background p-3 text-body-sm text-foreground border-l-4 border-l-warning">
-                    Potential bias against high-skill junior candidates (diversity penalty).
+                    {selectedAnomaly?.impact ?? 'No impact available.'}
                   </p>
                 </div>
               </div>
 
               <div className="mt-8 space-y-3">
-                <button
-                  onClick={() => {
-                    onRecalibrate();
-                    onClose();
-                  }}
-                  className="flex w-full items-center justify-center gap-2 rounded bg-primary px-4 py-2.5 text-body-sm font-semibold text-white transition-colors hover:bg-primary/90"
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                  Recalibrate Model Weights
-                </button>
+                {selectedAnomaly?.action === 'Recalibrate Model' ? (
+                  <button
+                    onClick={() => {
+                      onRecalibrate();
+                      onClose();
+                    }}
+                    className="flex w-full items-center justify-center gap-2 rounded bg-primary px-4 py-2.5 text-body-sm font-semibold text-white transition-colors hover:bg-primary/90"
+                  >
+                    <SlidersHorizontal className="h-4 w-4" />
+                    Recalibrate Model Weights
+                  </button>
+                ) : (
+                  <button className="flex w-full items-center justify-center gap-2 rounded bg-primary px-4 py-2.5 text-body-sm font-semibold text-white transition-colors hover:bg-primary/90">
+                    {selectedAnomaly?.action ?? 'Acknowledge'}
+                  </button>
+                )}
                 <div className="grid grid-cols-2 gap-3">
                   <button className="flex w-full items-center justify-center gap-2 rounded border border-border bg-surface px-4 py-2 text-body-sm font-semibold text-foreground transition-colors hover:bg-surface-hover">
                     Acknowledge

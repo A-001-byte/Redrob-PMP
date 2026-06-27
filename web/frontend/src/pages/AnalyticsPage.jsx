@@ -131,11 +131,9 @@ export default function AnalyticsPage() {
   const top10Semantic = top10Cohort.semantic !== undefined ? top10Cohort.semantic.toFixed(3) : '--';
   const top10Career = top10Cohort.career !== undefined ? top10Cohort.career.toFixed(3) : '--';
 
-  const puneCount = metrics?.location_distribution?.Pune || 0;
-  const noidaCount = metrics?.location_distribution?.Noida || 0;
   const totalCandidates = candidates.length || 1;
-  const localPct = `${(((puneCount + noidaCount) / totalCandidates) * 100).toFixed(0)}%`;
-  const topHub = puneCount >= noidaCount ? 'Pune' : 'Noida';
+  const topHub = locations[0]?.name || '—';
+  const localPct = `${(((locations[0]?.value ?? 0) + (locations[1]?.value ?? 0)) / totalCandidates * 100).toFixed(0)}%`;
 
   const bestRange = useMemo(() => [...expBins].sort((a, b) => b.averageScore - a.averageScore)[0], [expBins]);
   const bestRangeLabel = bestRange ? bestRange.range : '--';
@@ -426,7 +424,7 @@ export default function AnalyticsPage() {
                 </BarChart>
               </ResponsiveContainer>
             }
-            insightSummary="Avg composite score by experience bracket. Tooltip displays candidate count."
+            insightSummary="Avg composite score by experience bracket. Tooltip displays the average score for each bucket."
           />
 
           {/* Question 6: How does pipeline attainability compare to match score? */}

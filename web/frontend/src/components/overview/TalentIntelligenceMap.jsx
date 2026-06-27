@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { memo, useEffect, useRef, useState, useMemo } from 'react';
 import {
   forceSimulation,
   forceManyBody,
@@ -153,7 +153,7 @@ const CLUSTERS = {
   'Backend': { angle: (5 * Math.PI) / 3, label: 'Backend' }
 };
 
-export default function TalentIntelligenceMap({ candidates, onSelect }) {
+function TalentIntelligenceMap({ candidates, onSelect }) {
   const { rerank } = useData();
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -474,7 +474,10 @@ export default function TalentIntelligenceMap({ candidates, onSelect }) {
       n => {
         if (n.type === 'candidate') return activeLayers.candidates;
         if (n.type === 'risk') return activeLayers.certifications;
-        return activeLayers[`${n.type}s` || n.type];
+        if (n.type === 'company') return activeLayers.companies;
+        if (n.type === 'skill') return activeLayers.skills;
+        if (n.type === 'certification') return activeLayers.certifications;
+        return true;
       }
     );
     const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
@@ -1575,3 +1578,5 @@ export default function TalentIntelligenceMap({ candidates, onSelect }) {
     </div>
   );
 }
+
+export default memo(TalentIntelligenceMap);

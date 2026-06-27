@@ -42,7 +42,7 @@ export default function FunnelChart({ funnel }) {
         {counts.map((count, i) => {
           const meta = STAGE_META[i];
           const previousCount = i > 0 ? counts[i - 1] : counts[0];
-          const conversionRate = i > 0 ? (count / previousCount) * 100 : 100;
+          const conversionRate = i > 0 && previousCount > 0 ? (count / previousCount) * 100 : 100;
 
           return (
             <div key={meta.label} className="relative group">
@@ -100,7 +100,7 @@ export default function FunnelChart({ funnel }) {
             </div>
           </div>
           <span className={`font-mono text-xs font-bold ${funnel.l5_demotions ? 'text-warning' : 'text-muted'}`}>
-            {funnel.l5_demotions} candidates
+            {(funnel.l5_demotions ?? 0)} candidates
           </span>
         </div>
 
@@ -117,7 +117,7 @@ export default function FunnelChart({ funnel }) {
             </div>
           </div>
           <span className={`font-mono text-xs font-bold ${funnel.l6_replacements ? 'text-destructive' : 'text-muted'}`}>
-            {funnel.l6_replacements} candidates
+            {(funnel.l6_replacements ?? 0)} candidates
           </span>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { Fragment, useMemo, useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { accordionVariants, staggerItem } from './motion/presets.js';
 import {
@@ -190,11 +190,13 @@ export default function RankingTable({ candidates, onSelect, selected, onToggleS
       handleRowClick(candidateId);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      const nextRow = e.currentTarget.nextElementSibling;
+      const focusableRows = Array.from(e.currentTarget.closest('tbody')?.querySelectorAll('tr[role="row"][tabindex="0"]') ?? []);
+      const nextRow = focusableRows[focusableRows.indexOf(e.currentTarget) + 1];
       if (nextRow) nextRow.focus();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      const prevRow = e.currentTarget.previousElementSibling;
+      const focusableRows = Array.from(e.currentTarget.closest('tbody')?.querySelectorAll('tr[role="row"][tabindex="0"]') ?? []);
+      const prevRow = focusableRows[focusableRows.indexOf(e.currentTarget) - 1];
       if (prevRow) prevRow.focus();
     }
   };
@@ -340,10 +342,9 @@ export default function RankingTable({ candidates, onSelect, selected, onToggleS
               const isExpanded = expandedId === c.candidate_id;
 
               return (
-                <>
+                <Fragment key={c.candidate_id}>
                   {/* Staggered row entry on pagination */}
                   <motion.tr
-                    key={`row-${c.candidate_id}`}
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.18, ease: 'easeOut', delay: Math.min(rowIdx * 0.025, 0.3) }}
@@ -499,7 +500,6 @@ export default function RankingTable({ candidates, onSelect, selected, onToggleS
                   <AnimatePresence initial={false}>
                   {isExpanded && (
                     <tr
-                      key={`expand-${c.candidate_id}`}
                       className="bg-primary/[0.01]"
                     >
                       <td colSpan={onToggleSelect ? 7 : 6} className="p-0 border-none">
@@ -584,7 +584,7 @@ export default function RankingTable({ candidates, onSelect, selected, onToggleS
                     </tr>
                   )}
                   </AnimatePresence>
-                </>
+                </Fragment>
               );
             })}
           </tbody>

@@ -18,6 +18,8 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const canvasRef = useRef(null);
+  const timeoutRef = useRef(null);
+  const mountedRef = useRef(true);
 
   // States
   const [email, setEmail] = useState('');
@@ -26,6 +28,14 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   // Canvas Grid background animation
   useEffect(() => {
@@ -102,7 +112,8 @@ export default function LoginPage() {
 
     setLoading(true);
     // Simulate minor loading delays (palantir style decrypting look)
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
+      if (!mountedRef.current) return;
       const success = login(email, password);
       if (success) {
         navigate('/', { replace: true });

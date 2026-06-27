@@ -84,7 +84,7 @@ export default function CareerTimeline({ history }) {
         </div>
       </div>
       <p className="mt-1 text-caption text-muted">
-        Hover a bar for the role · green = current · gaps and overlaps are real data
+        Hover a bar for the role · current role is highlighted with the accent color · gaps and overlaps are real data
       </p>
     </div>
   );
