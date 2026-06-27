@@ -32,10 +32,10 @@ export default function CandidatesPage() {
     });
 
   return (
-    <motion.main {...pageEnter} className="mx-auto max-w-7xl space-y-4 px-4 py-6">
+    <motion.main {...pageEnter} className="mx-auto max-w-7xl space-y-6 px-4 py-8">
       <div>
-        <h1 className="font-heading text-2xl font-semibold text-foreground">Candidates</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">Candidates</h1>
+        <p className="mt-1 text-sm text-muted font-body">
           The submitted top 100 — search, filter, tag a shortlist, tick boxes to compare,
           or re-weight the score live.
         </p>

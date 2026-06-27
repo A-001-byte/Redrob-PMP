@@ -2,75 +2,148 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════════
+   PRECISION HIRE — Design System Tokens
+   AI Recruitment Intelligence Platform
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Semantic Colors ────────────────────────────────────────────── */
+  --primary: #5B6AD0;
+  --on-primary: #FFFFFF;
+  --secondary: #5B8BC4;
+  --accent: #3D9A6D;
+  --support: #C8963E;
+  --info: #5B8BC4;
+  --danger: #C45B5B;
+
+  /* ── Light Mode Surfaces ────────────────────────────────────────── */
+  --background: #F7F7F9;
+  --foreground: #1A1D26;
+  --muted: #6E7180;
+  --border: rgba(0, 0, 0, 0.08);
+  --surface: #FFFFFF;
+  --surface-hover: #F0F0F4;
+  --surface-elevated: #FFFFFF;
+  --sidebar: #F0F1F4;
+
+  /* ── Shadows (light) ────────────────────────────────────────────── */
+  --shadow-color: 0, 0, 0;
+  --shadow-sm: none;
+  --shadow-default: none;
+  --shadow-lg: none;
+  --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-tooltip: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dark {
+  /* ── Semantic Colors (same hues, tuned for dark) ────────────────── */
+  --primary: #7B8AE6;
+  --on-primary: #FFFFFF;
+  --secondary: #6D9DD4;
+  --accent: #4DAE7D;
+  --support: #D4A652;
+  --info: #6D9DD4;
+  --danger: #D46B6B;
+
+  /* ── Dark Mode Surfaces (warm neutrals) ─────────────────────────── */
+  --background: #0F1117;
+  --foreground: #E4E4E8;
+  --muted: #8B8D98;
+  --border: rgba(255, 255, 255, 0.06);
+  --surface: #171921;
+  --surface-hover: #252730;
+  --surface-elevated: #1E2029;
+  --sidebar: #131520;
+
+  /* ── Shadows (dark — reserved for floating elements only) ───────── */
+  --shadow-color: 0, 0, 0;
+  --shadow-sm: none;
+  --shadow-default: none;
+  --shadow-lg: none;
+  --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-tooltip: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════════════════════ */
+
 body {
-  @apply bg-background font-body text-foreground antialiased;
+  @apply bg-background font-body text-foreground antialiased transition-colors duration-150;
+  /* No background patterns — clean enterprise surface */
 }
 
-/* ── Selection ────────────────────────────────────────────────── */
+/* ── Selection ────────────────────────────────────────────────────── */
 ::selection {
-  background: rgba(30, 64, 175, 0.4);
-  color: #e2e8f0;
+  background: rgba(91, 106, 208, 0.12);
+  color: var(--primary);
 }
 
-/* ── Scrollbar — thin, dark ───────────────────────────────────── */
+/* ── Scrollbar ────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #030712;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--border);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--muted);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #1e293b #030712;
+  scrollbar-color: var(--border) transparent;
 }
 
-/* ── Glow utilities ───────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Smooth theme transitions applied temporarily to root */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke !important;
+  transition-duration: 400ms !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
 @layer utilities {
-  .text-glow {
-    text-shadow: 0 0 10px rgba(30, 64, 175, 0.5);
-  }
-  .text-glow-amber {
-    text-shadow: 0 0 10px rgba(217, 119, 6, 0.5);
-  }
-  .text-glow-emerald {
-    text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  /* Skeleton loading shimmer */
+  .animate-skeleton {
+    background: linear-gradient(90deg, rgba(var(--shadow-color), 0.02) 25%, rgba(var(--shadow-color), 0.06) 50%, rgba(var(--shadow-color), 0.02) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite linear;
   }
 
-  .glass {
-    background: rgba(10, 15, 26, 0.80);
-    backdrop-filter: blur(20px) saturate(1.6);
-    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  /* Active processing pulse for progress bars */
+  .animate-bar-pulse {
+    animation: bar-active-pulse 2s infinite ease-in-out;
   }
+}
 
-  .glass-strong {
-    background: rgba(10, 15, 26, 0.92);
-    backdrop-filter: blur(24px) saturate(1.8);
-    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
   }
+  100% {
+    background-position: 200% 0;
+  }
+}
 
-  /* Card hover lift */
-  .hover-lift {
-    transition: transform 200ms ease, box-shadow 200ms ease;
-  }
-  .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(30, 64, 175, 0.15);
-  }
-
-  /* Progress bar glow */
-  .bar-glow {
-    box-shadow: 0 0 8px rgba(30, 64, 175, 0.5);
-  }
+@keyframes bar-active-pulse {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.85; filter: brightness(1.15); }
 }
 
 @media (prefers-reduced-motion: reduce) {

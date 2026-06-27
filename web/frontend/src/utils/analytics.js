@@ -85,3 +85,31 @@ export function skillCoverage(candidates, key = 'matched_required_skills', top =
     .sort((a, b) => b.count - a.count || (a.skill < b.skill ? -1 : 1))
     .slice(0, top);
 }
+
+/** Groups candidates by Years of Experience (YoE) ranges and computes average composite score and count. */
+export function binExperience(candidates) {
+  const ranges = [
+    { label: '0–3 YOE', test: (y) => y < 3, count: 0, sumScore: 0 },
+    { label: '3–6 YOE', test: (y) => y >= 3 && y < 6, count: 0, sumScore: 0 },
+    { label: '6–9 YOE', test: (y) => y >= 6 && y < 9, count: 0, sumScore: 0 },
+    { label: '9–12 YOE', test: (y) => y >= 9 && y < 12, count: 0, sumScore: 0 },
+    { label: '12+ YOE', test: (y) => y >= 12, count: 0, sumScore: 0 },
+  ];
+
+  for (const c of candidates) {
+    const y = Number(c.yoe || 0);
+    for (const r of ranges) {
+      if (r.test(y)) {
+        r.count += 1;
+        r.sumScore += (c.score || 0);
+        break;
+      }
+    }
+  }
+
+  return ranges.map((r) => ({
+    range: r.label,
+    count: r.count,
+    averageScore: r.count > 0 ? Number((r.sumScore / r.count).toFixed(4)) : 0,
+  }));
+}

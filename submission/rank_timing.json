@@ -1,15 +1,15 @@
 {
   "timings_s": {
-    "load": 1.91,
-    "L0_faiss": 0.08,
-    "L1_hybrid": 0.26,
-    "L2_cross_encoder": 9.0,
-    "L3_composite": 0.0,
+    "load": 3.23,
+    "L0_faiss": 0.5,
+    "L1_hybrid": 0.67,
+    "L2_cross_encoder": 112.94,
+    "L3_composite": 0.1,
     "L4_rerank": 0.0,
     "L5_gate": 0.0,
     "L6_safety": 0.0,
-    "output": 0.0,
-    "total": 11.25
+    "output": 0.01,
+    "total": 117.44
   },
   "funnel": [
     5000,

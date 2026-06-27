@@ -2,15 +2,15 @@
  *  orange < 0.6 (status colors only — never decorative).
  *  Adjusted for dark OLED backgrounds. */
 export function scoreColor(score) {
-  if (score > 0.8) return 'bg-emerald-500';
-  if (score >= 0.6) return 'bg-yellow-500';
-  return 'bg-orange-500';
+  if (score > 0.8) return 'bg-success';
+  if (score >= 0.6) return 'bg-warning';
+  return 'bg-destructive';
 }
 
 export function scoreTextColor(score) {
-  if (score > 0.8) return 'text-emerald-400';
-  if (score >= 0.6) return 'text-yellow-400';
-  return 'text-orange-400';
+  if (score > 0.8) return 'text-success';
+  if (score >= 0.6) return 'text-warning';
+  return 'text-destructive';
 }
 
 const MAX_SCORE = 1.1; // composites top out around 1.07 (1.25 availability cap)
@@ -52,24 +52,23 @@ export function locationBucket(row) {
   return 'International';
 }
 
-/** Stacked sparkbar palette — blue data ramp + amber for assessment.
- *  Lightened for the dark theme: every swatch reads ≥3:1 against surface
- *  (#0A0F1A); the old #1E40AF primary vanished on dark backgrounds. */
+/** Stacked sparkbar palette — mapped to our editorial canvas color palette */
 export const PART_COLORS = {
-  semantic: '#93C5FD',
-  career: '#60A5FA',
-  skill: '#3B82F6',
-  experience: '#818CF8',
-  assessment: '#FBBF24',
+  semantic: 'var(--secondary)',
+  career: 'var(--primary)',
+  skill: 'var(--accent)',
+  experience: 'var(--support)',
+  assessment: 'var(--accent)',
 };
 
 export const PART_LABELS = {
-  semantic: 'Semantic',
-  career: 'Career',
-  skill: 'Skill',
-  experience: 'Experience',
-  assessment: 'Assessment',
-  trajectory: 'Trajectory',
-  consistency: 'Consistency',
-  anchor_penalty: 'Anchor penalty',
+  semantic: 'Role Alignment Match',
+  career: 'Academic & Career Prestige',
+  skill: 'Technical Stack Match',
+  experience: 'Tenure Alignment',
+  assessment: 'Verified Assessments',
+  trajectory: 'Career Growth Vector',
+  consistency: 'Profile Consistency Match',
+  anchor_penalty: 'Industry Alignment Penalty',
 };
+
