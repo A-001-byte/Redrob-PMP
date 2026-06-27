@@ -119,6 +119,15 @@ export default function AnomaliesDeepDive({ isOpen, onClose, onRecalibrate }) {
                       <tr
                         key={anom.id}
                         onClick={() => setSelectedAnomalyId(anom.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedAnomalyId(anom.id);
+                          }
+                        }}
+                        tabIndex={0}
+                        role="button"
+                        aria-pressed={selectedAnomaly?.id === anom.id}
                         className={`border-t border-border bg-surface hover:bg-surface-hover/30 transition-colors cursor-pointer ${selectedAnomaly?.id === anom.id ? 'bg-surface-hover/40' : ''}`}
                       >
                         <td className="px-4 py-3">
@@ -188,8 +197,13 @@ export default function AnomaliesDeepDive({ isOpen, onClose, onRecalibrate }) {
                     Recalibrate Model Weights
                   </button>
                 ) : (
-                  <button className="flex w-full items-center justify-center gap-2 rounded bg-primary px-4 py-2.5 text-body-sm font-semibold text-white transition-colors hover:bg-primary/90">
-                    {selectedAnomaly?.action ?? 'Acknowledge'}
+                  <button
+                    type="button"
+                    disabled
+                    className="flex w-full items-center justify-center gap-2 rounded bg-primary px-4 py-2.5 text-body-sm font-semibold text-white opacity-50 cursor-not-allowed"
+                    title="Coming soon"
+                  >
+                    {selectedAnomaly?.action ?? 'Coming Soon'}
                   </button>
                 )}
                 <div className="grid grid-cols-2 gap-3">
