@@ -2,13 +2,15 @@ import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
+const DEMO_USER = { email: 'demo@redrob.ai', name: 'Demo', role: 'viewer' };
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem('redrob_user');
-      return saved ? JSON.parse(saved) : null;
+      return saved ? JSON.parse(saved) : DEMO_USER;
     } catch {
-      return null;
+      return DEMO_USER;
     }
   });
 
