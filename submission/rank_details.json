@@ -17,7 +17,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 1.06645117757468,
-      "cross_encoder": -3.056642532348633
+      "cross_encoder": -3.0566415786743164
     }
   },
   "CAND_0046525": {
@@ -38,7 +38,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 1.0653593749999999,
-      "cross_encoder": -1.3540863990783691
+      "cross_encoder": -1.3540841341018677
     }
   },
   "CAND_0018499": {
@@ -64,8 +64,8 @@
   },
   "CAND_0086022": {
     "rank": 4,
-    "composite": 0.9796453922928443,
-    "base": 0.8163711602440368,
+    "composite": 0.9796453922928444,
+    "base": 0.8163711602440369,
     "parts": {
       "semantic": 0.2322961602440368,
       "career": 0.2496,
@@ -75,11 +75,11 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.8163711602440368,
+      "base": 0.8163711602440369,
       "availability_multiplier": 1.2000000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.9796453922928443,
+      "composite": 0.9796453922928444,
       "cross_encoder": -3.2971482276916504
     }
   },
@@ -122,7 +122,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.9152006233257808,
-      "cross_encoder": 0.03720828890800476
+      "cross_encoder": 0.03720669075846672
     }
   },
   "CAND_0071974": {
@@ -143,13 +143,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.9149078371013928,
-      "cross_encoder": -1.0570696592330933
+      "cross_encoder": -1.057070016860962
     }
   },
   "CAND_0006567": {
     "rank": 8,
-    "composite": 0.9117515961664443,
-    "base": 0.7792748685183284,
+    "composite": 0.9117515961664442,
+    "base": 0.7792748685183283,
     "parts": {
       "semantic": 0.17782486851832838,
       "career": 0.2874,
@@ -159,12 +159,12 @@
       "trajectory": -0.05,
       "consistency": 0.03,
       "anchor_penalty": -0.0,
-      "base": 0.7792748685183284,
+      "base": 0.7792748685183283,
       "availability_multiplier": 1.1700000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.9117515961664443,
-      "cross_encoder": -1.9319558143615723
+      "composite": 0.9117515961664442,
+      "cross_encoder": -1.93195641040802
     }
   },
   "CAND_0079387": {
@@ -185,13 +185,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.896031439667392,
-      "cross_encoder": -0.9126743674278259
+      "cross_encoder": -0.9126739501953125
     }
   },
   "CAND_0041669": {
     "rank": 10,
-    "composite": 0.8899236418825225,
-    "base": 0.711938913506018,
+    "composite": 0.8899236418825227,
+    "base": 0.7119389135060181,
     "parts": {
       "semantic": 0.14833891350601805,
       "career": 0.29,
@@ -201,12 +201,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.711938913506018,
+      "base": 0.7119389135060181,
       "availability_multiplier": 1.25,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.8899236418825225,
-      "cross_encoder": -3.175032138824463
+      "composite": 0.8899236418825227,
+      "cross_encoder": -3.1750283241271973
     }
   },
   "CAND_0092706": {
@@ -227,13 +227,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.8639901911186944,
-      "cross_encoder": -1.601001501083374
+      "cross_encoder": -1.6010010242462158
     }
   },
   "CAND_0077337": {
     "rank": 12,
-    "composite": 0.8590799688275879,
-    "base": 0.6872639750620703,
+    "composite": 0.859079968827588,
+    "base": 0.6872639750620704,
     "parts": {
       "semantic": 0.09721397506207034,
       "career": 0.285,
@@ -243,12 +243,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.6872639750620703,
+      "base": 0.6872639750620704,
       "availability_multiplier": 1.25,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.8590799688275879,
-      "cross_encoder": -0.9562819600105286
+      "composite": 0.859079968827588,
+      "cross_encoder": -0.956280529499054
     }
   },
   "CAND_0039754": {
@@ -269,7 +269,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.853851149766421,
-      "cross_encoder": -3.02406644821167
+      "cross_encoder": -3.0240659713745117
     }
   },
   "CAND_0052328": {
@@ -295,8 +295,8 @@
   },
   "CAND_0081686": {
     "rank": 15,
-    "composite": 0.8360793166762259,
-    "base": 0.7145977065608767,
+    "composite": 0.8360793166762257,
+    "base": 0.7145977065608766,
     "parts": {
       "semantic": 0.11507270656087676,
       "career": 0.29,
@@ -306,12 +306,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.7145977065608767,
+      "base": 0.7145977065608766,
       "availability_multiplier": 1.1700000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.8360793166762259,
-      "cross_encoder": -3.441500663757324
+      "composite": 0.8360793166762257,
+      "cross_encoder": -3.441500186920166
     }
   },
   "CAND_0015065": {
@@ -332,7 +332,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.8296987826259734,
-      "cross_encoder": -1.4999206066131592
+      "cross_encoder": -1.4999198913574219
     }
   },
   "CAND_0031593": {
@@ -353,7 +353,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.8023923097312863,
-      "cross_encoder": -3.265109062194824
+      "cross_encoder": -3.265106201171875
     }
   },
   "CAND_0075249": {
@@ -374,7 +374,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.8013354337288687,
-      "cross_encoder": -0.8044593930244446
+      "cross_encoder": -0.8044600486755371
     }
   },
   "CAND_0052335": {
@@ -395,13 +395,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7964534644969059,
-      "cross_encoder": -2.823391914367676
+      "cross_encoder": -2.8233890533447266
     }
   },
   "CAND_0055992": {
     "rank": 20,
-    "composite": 0.792002894051764,
-    "base": 0.6336023152414112,
+    "composite": 0.7920028940517638,
+    "base": 0.6336023152414111,
     "parts": {
       "semantic": 0.11545231524141122,
       "career": 0.27749999999999997,
@@ -411,18 +411,18 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.6336023152414112,
+      "base": 0.6336023152414111,
       "availability_multiplier": 1.25,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.792002894051764,
-      "cross_encoder": 0.5880901217460632
+      "composite": 0.7920028940517638,
+      "cross_encoder": 0.5880904793739319
     }
   },
   "CAND_0002025": {
     "rank": 21,
-    "composite": 0.7849077527770199,
-    "base": 0.6279262022216159,
+    "composite": 0.7849077527770197,
+    "base": 0.6279262022216158,
     "parts": {
       "semantic": 0.11367620222161592,
       "career": 0.29999999999999993,
@@ -432,12 +432,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.6279262022216159,
+      "base": 0.6279262022216158,
       "availability_multiplier": 1.25,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.7849077527770199,
-      "cross_encoder": -0.04458022117614746
+      "composite": 0.7849077527770197,
+      "cross_encoder": -0.04457873851060867
     }
   },
   "CAND_0052682": {
@@ -458,7 +458,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7821766840864076,
-      "cross_encoder": -1.450862169265747
+      "cross_encoder": -1.4508612155914307
     }
   },
   "CAND_0037000": {
@@ -479,7 +479,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7721006319831705,
-      "cross_encoder": -3.189868927001953
+      "cross_encoder": -3.1898677349090576
     }
   },
   "CAND_0084819": {
@@ -500,7 +500,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7691720408501832,
-      "cross_encoder": -1.8429937362670898
+      "cross_encoder": -1.8429926633834839
     }
   },
   "CAND_0093912": {
@@ -521,7 +521,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7672093920140397,
-      "cross_encoder": -1.765440821647644
+      "cross_encoder": -1.7654438018798828
     }
   },
   "CAND_0030031": {
@@ -542,13 +542,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7596311319710396,
-      "cross_encoder": -0.17359337210655212
+      "cross_encoder": -0.17359445989131927
     }
   },
   "CAND_0068811": {
     "rank": 27,
-    "composite": 0.7562166215859649,
-    "base": 0.630180517988304,
+    "composite": 0.7562166215859648,
+    "base": 0.6301805179883039,
     "parts": {
       "semantic": 0.09078051798830399,
       "career": 0.29999999999999993,
@@ -558,12 +558,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.630180517988304,
+      "base": 0.6301805179883039,
       "availability_multiplier": 1.2000000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.7562166215859649,
-      "cross_encoder": -1.3914592266082764
+      "composite": 0.7562166215859648,
+      "cross_encoder": -1.3914612531661987
     }
   },
   "CAND_0093547": {
@@ -584,7 +584,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7512661376702159,
-      "cross_encoder": -2.690570831298828
+      "cross_encoder": -2.6905674934387207
     }
   },
   "CAND_0042506": {
@@ -605,7 +605,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7446501820351324,
-      "cross_encoder": -3.2306134700775146
+      "cross_encoder": -3.23061466217041
     }
   },
   "CAND_0091534": {
@@ -626,7 +626,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7311417829832034,
-      "cross_encoder": -2.2168571949005127
+      "cross_encoder": -2.216855525970459
     }
   },
   "CAND_0053591": {
@@ -647,7 +647,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7308029718048639,
-      "cross_encoder": -2.860708236694336
+      "cross_encoder": -2.860705852508545
     }
   },
   "CAND_0014858": {
@@ -668,7 +668,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7307942623780364,
-      "cross_encoder": -3.534254550933838
+      "cross_encoder": -3.5342533588409424
     }
   },
   "CAND_0074735": {
@@ -689,7 +689,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.730434508600153,
-      "cross_encoder": -3.482743740081787
+      "cross_encoder": -3.4827418327331543
     }
   },
   "CAND_0033179": {
@@ -710,13 +710,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7266229514884335,
-      "cross_encoder": -2.546807050704956
+      "cross_encoder": -2.546807289123535
     }
   },
   "CAND_0058412": {
     "rank": 35,
-    "composite": 0.7255246239843811,
-    "base": 0.6780603962470851,
+    "composite": 0.725524623984381,
+    "base": 0.678060396247085,
     "parts": {
       "semantic": 0.1468603962470852,
       "career": 0.2924999999999999,
@@ -726,18 +726,18 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.6780603962470851,
+      "base": 0.678060396247085,
       "availability_multiplier": 1.07,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.7255246239843811,
-      "cross_encoder": -1.323236346244812
+      "composite": 0.725524623984381,
+      "cross_encoder": -1.3232390880584717
     }
   },
   "CAND_0061265": {
     "rank": 36,
-    "composite": 0.7245678153289412,
-    "base": 0.6412104560433106,
+    "composite": 0.7245678153289411,
+    "base": 0.6412104560433105,
     "parts": {
       "semantic": 0.032485456043310684,
       "career": 0.29999999999999993,
@@ -747,12 +747,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.6412104560433106,
+      "base": 0.6412104560433105,
       "availability_multiplier": 1.1300000000000003,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.7245678153289412,
-      "cross_encoder": -0.6405801177024841
+      "composite": 0.7245678153289411,
+      "cross_encoder": -0.6405819058418274
     }
   },
   "CAND_0065878": {
@@ -773,7 +773,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7239582614837009,
-      "cross_encoder": -2.8085811138153076
+      "cross_encoder": -2.8085782527923584
     }
   },
   "CAND_0011687": {
@@ -794,7 +794,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7149690902430141,
-      "cross_encoder": -2.8435769081115723
+      "cross_encoder": -2.843576431274414
     }
   },
   "CAND_0064904": {
@@ -815,7 +815,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7131210576853302,
-      "cross_encoder": -1.583339810371399
+      "cross_encoder": -1.5833406448364258
     }
   },
   "CAND_0009024": {
@@ -836,7 +836,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7071842383989477,
-      "cross_encoder": -2.634258270263672
+      "cross_encoder": -2.6342620849609375
     }
   },
   "CAND_0013665": {
@@ -857,7 +857,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7061077730482499,
-      "cross_encoder": -1.3845566511154175
+      "cross_encoder": -1.3845601081848145
     }
   },
   "CAND_0065195": {
@@ -878,7 +878,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7043193657838199,
-      "cross_encoder": -1.0508899688720703
+      "cross_encoder": -1.050891399383545
     }
   },
   "CAND_0053605": {
@@ -899,13 +899,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.7038127587708037,
-      "cross_encoder": -2.541473865509033
+      "cross_encoder": -2.5414719581604004
     }
   },
   "CAND_0074325": {
     "rank": 44,
-    "composite": 0.7002371123866189,
-    "base": 0.6544272078379616,
+    "composite": 0.7002371123866191,
+    "base": 0.6544272078379617,
     "parts": {
       "semantic": 0.15802720783796162,
       "career": 0.29999999999999993,
@@ -915,18 +915,18 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.6544272078379616,
+      "base": 0.6544272078379617,
       "availability_multiplier": 1.07,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.7002371123866189,
-      "cross_encoder": -1.2131736278533936
+      "composite": 0.7002371123866191,
+      "cross_encoder": -1.2131754159927368
     }
   },
   "CAND_0040117": {
     "rank": 45,
-    "composite": 0.6987821905864133,
-    "base": 0.6076366874664463,
+    "composite": 0.6987821905864132,
+    "base": 0.6076366874664462,
     "parts": {
       "semantic": 0.060486687466446275,
       "career": 0.29999999999999993,
@@ -936,18 +936,18 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.6076366874664463,
+      "base": 0.6076366874664462,
       "availability_multiplier": 1.1500000000000001,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6987821905864133,
-      "cross_encoder": -1.3142781257629395
+      "composite": 0.6987821905864132,
+      "cross_encoder": -1.3142812252044678
     }
   },
   "CAND_0054123": {
     "rank": 46,
-    "composite": 0.6982265639507269,
-    "base": 0.5967748409835272,
+    "composite": 0.6982265639507268,
+    "base": 0.5967748409835271,
     "parts": {
       "semantic": 0.06177484098352717,
       "career": 0.285,
@@ -957,12 +957,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.5967748409835272,
+      "base": 0.5967748409835271,
       "availability_multiplier": 1.1700000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6982265639507269,
-      "cross_encoder": -0.2815432846546173
+      "composite": 0.6982265639507268,
+      "cross_encoder": -0.28154176473617554
     }
   },
   "CAND_0082489": {
@@ -983,7 +983,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.697304395505953,
-      "cross_encoder": -2.2079124450683594
+      "cross_encoder": -2.2079150676727295
     }
   },
   "CAND_0066035": {
@@ -1004,7 +1004,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6902161758653871,
-      "cross_encoder": -2.484708786010742
+      "cross_encoder": -2.484710693359375
     }
   },
   "CAND_0047721": {
@@ -1046,13 +1046,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6768273044506198,
-      "cross_encoder": -3.4173569679260254
+      "cross_encoder": -3.417353630065918
     }
   },
   "CAND_0087630": {
     "rank": 51,
-    "composite": 0.6762650066350238,
-    "base": 0.6147863696682033,
+    "composite": 0.6762650066350235,
+    "base": 0.6147863696682032,
     "parts": {
       "semantic": 0.0632863696682033,
       "career": 0.29,
@@ -1062,18 +1062,18 @@
       "trajectory": 0.0,
       "consistency": -0.03,
       "anchor_penalty": -0.0,
-      "base": 0.6147863696682033,
+      "base": 0.6147863696682032,
       "availability_multiplier": 1.1,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6762650066350238,
-      "cross_encoder": -1.6343772411346436
+      "composite": 0.6762650066350235,
+      "cross_encoder": -1.6343774795532227
     }
   },
   "CAND_0083307": {
     "rank": 52,
-    "composite": 0.6709910718398083,
-    "base": 0.621288029481304,
+    "composite": 0.6709910718398082,
+    "base": 0.6212880294813039,
     "parts": {
       "semantic": 0.14303802948130404,
       "career": 0.285,
@@ -1083,12 +1083,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.621288029481304,
+      "base": 0.6212880294813039,
       "availability_multiplier": 1.08,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6709910718398083,
-      "cross_encoder": -3.19234037399292
+      "composite": 0.6709910718398082,
+      "cross_encoder": -3.192335844039917
     }
   },
   "CAND_0095528": {
@@ -1109,7 +1109,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.670285509707761,
-      "cross_encoder": -0.8331896662712097
+      "cross_encoder": -0.833194375038147
     }
   },
   "CAND_0067866": {
@@ -1130,7 +1130,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.665840034978429,
-      "cross_encoder": -2.077573776245117
+      "cross_encoder": -2.077576160430908
     }
   },
   "CAND_0008425": {
@@ -1151,13 +1151,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6652896893536704,
-      "cross_encoder": 0.04334281012415886
+      "cross_encoder": 0.04334120452404022
     }
   },
   "CAND_0006538": {
     "rank": 56,
-    "composite": 0.6639517392872184,
-    "base": 0.5442227371206707,
+    "composite": 0.6639517392872185,
+    "base": 0.5442227371206708,
     "parts": {
       "semantic": 0.15509773712067074,
       "career": 0.22999999999999998,
@@ -1167,12 +1167,12 @@
       "trajectory": 0.0,
       "consistency": 0.03,
       "anchor_penalty": -0.0,
-      "base": 0.5442227371206707,
+      "base": 0.5442227371206708,
       "availability_multiplier": 1.2200000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6639517392872184,
-      "cross_encoder": -0.7463971972465515
+      "composite": 0.6639517392872185,
+      "cross_encoder": -0.7463996410369873
     }
   },
   "CAND_0067322": {
@@ -1193,7 +1193,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6589593959747314,
-      "cross_encoder": -2.3554067611694336
+      "cross_encoder": -2.35540771484375
     }
   },
   "CAND_0048166": {
@@ -1214,7 +1214,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6559283373125524,
-      "cross_encoder": -2.8331456184387207
+      "cross_encoder": -2.833144426345825
     }
   },
   "CAND_0044855": {
@@ -1235,13 +1235,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6544973655886246,
-      "cross_encoder": -1.5921387672424316
+      "cross_encoder": -1.5921378135681152
     }
   },
   "CAND_0065786": {
     "rank": 60,
-    "composite": 0.6517338690496037,
-    "base": 0.521387095239683,
+    "composite": 0.6517338690496038,
+    "base": 0.5213870952396831,
     "parts": {
       "semantic": 0.14313709523968302,
       "career": 0.29,
@@ -1251,12 +1251,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.521387095239683,
+      "base": 0.5213870952396831,
       "availability_multiplier": 1.25,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6517338690496037,
-      "cross_encoder": -3.032527446746826
+      "composite": 0.6517338690496038,
+      "cross_encoder": -3.0325260162353516
     }
   },
   "CAND_0080344": {
@@ -1277,7 +1277,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6506735938040175,
-      "cross_encoder": -3.670606851577759
+      "cross_encoder": -3.6706013679504395
     }
   },
   "CAND_0049978": {
@@ -1298,7 +1298,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.650434571352645,
-      "cross_encoder": -1.0356618165969849
+      "cross_encoder": -1.0356639623641968
     }
   },
   "CAND_0025640": {
@@ -1319,13 +1319,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6489712995757384,
-      "cross_encoder": -3.534254550933838
+      "cross_encoder": -3.5342533588409424
     }
   },
   "CAND_0024878": {
     "rank": 64,
-    "composite": 0.6416875264732662,
-    "base": 0.513350021178613,
+    "composite": 0.6416875264732663,
+    "base": 0.5133500211786131,
     "parts": {
       "semantic": 0.07430002117861301,
       "career": 0.23999999999999996,
@@ -1335,12 +1335,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.513350021178613,
+      "base": 0.5133500211786131,
       "availability_multiplier": 1.25,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6416875264732662,
-      "cross_encoder": -1.6232129335403442
+      "composite": 0.6416875264732663,
+      "cross_encoder": -1.6232162714004517
     }
   },
   "CAND_0094759": {
@@ -1361,7 +1361,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6398970885741405,
-      "cross_encoder": -1.7099895477294922
+      "cross_encoder": -1.7099871635437012
     }
   },
   "CAND_0007009": {
@@ -1382,7 +1382,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6372537692004965,
-      "cross_encoder": -3.082882881164551
+      "cross_encoder": -3.082880973815918
     }
   },
   "CAND_0037160": {
@@ -1403,13 +1403,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6365564669468382,
-      "cross_encoder": -1.291013240814209
+      "cross_encoder": -1.2910135984420776
     }
   },
   "CAND_0049217": {
     "rank": 68,
-    "composite": 0.6356553388852906,
-    "base": 0.5386909651570259,
+    "composite": 0.6356553388852907,
+    "base": 0.538690965157026,
     "parts": {
       "semantic": 0.011240965157025922,
       "career": 0.29,
@@ -1419,12 +1419,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.5386909651570259,
+      "base": 0.538690965157026,
       "availability_multiplier": 1.1800000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6356553388852906,
-      "cross_encoder": -2.106497287750244
+      "composite": 0.6356553388852907,
+      "cross_encoder": -2.1064958572387695
     }
   },
   "CAND_0009691": {
@@ -1445,7 +1445,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6354662287832115,
-      "cross_encoder": -2.16215181350708
+      "cross_encoder": -2.1621522903442383
     }
   },
   "CAND_0044883": {
@@ -1466,7 +1466,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6340811944945798,
-      "cross_encoder": -1.7439095973968506
+      "cross_encoder": -1.7439056634902954
     }
   },
   "CAND_0093193": {
@@ -1487,7 +1487,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6300149094773773,
-      "cross_encoder": -3.5356080532073975
+      "cross_encoder": -3.535609483718872
     }
   },
   "CAND_0043958": {
@@ -1508,7 +1508,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6297621027915299,
-      "cross_encoder": -1.9119961261749268
+      "cross_encoder": -1.9119991064071655
     }
   },
   "CAND_0009516": {
@@ -1550,7 +1550,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6266259561541335,
-      "cross_encoder": -3.1470985412597656
+      "cross_encoder": -3.147096872329712
     }
   },
   "CAND_0020877": {
@@ -1571,7 +1571,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6243993168779256,
-      "cross_encoder": 0.3400214612483978
+      "cross_encoder": 0.34002286195755005
     }
   },
   "CAND_0051630": {
@@ -1592,7 +1592,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6231935975041718,
-      "cross_encoder": -2.5328359603881836
+      "cross_encoder": -2.5328383445739746
     }
   },
   "CAND_0089552": {
@@ -1613,7 +1613,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6212870599406363,
-      "cross_encoder": -3.256448745727539
+      "cross_encoder": -3.2564480304718018
     }
   },
   "CAND_0041402": {
@@ -1634,13 +1634,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6207444849960118,
-      "cross_encoder": -1.5466471910476685
+      "cross_encoder": -1.5466458797454834
     }
   },
   "CAND_0070589": {
     "rank": 79,
-    "composite": 0.6205075700546111,
-    "base": 0.5086127623398451,
+    "composite": 0.6205075700546112,
+    "base": 0.5086127623398452,
     "parts": {
       "semantic": 0.010612762339845183,
       "career": 0.29999999999999993,
@@ -1650,12 +1650,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.5086127623398451,
+      "base": 0.5086127623398452,
       "availability_multiplier": 1.2200000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6205075700546111,
-      "cross_encoder": -3.049840211868286
+      "composite": 0.6205075700546112,
+      "cross_encoder": -3.049837589263916
     }
   },
   "CAND_0081852": {
@@ -1676,7 +1676,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6149246348561493,
-      "cross_encoder": -0.5411813259124756
+      "cross_encoder": -0.5411812663078308
     }
   },
   "CAND_0098454": {
@@ -1697,7 +1697,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6141387198677989,
-      "cross_encoder": -2.094787836074829
+      "cross_encoder": -2.0947885513305664
     }
   },
   "CAND_0049896": {
@@ -1718,13 +1718,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6132575800383671,
-      "cross_encoder": -3.34232759475708
+      "cross_encoder": -3.342327117919922
     }
   },
   "CAND_0022274": {
     "rank": 83,
-    "composite": 0.6120521241482222,
-    "base": 0.48964169931857776,
+    "composite": 0.6120521241482223,
+    "base": 0.4896416993185778,
     "parts": {
       "semantic": 0.01784169931857778,
       "career": 0.26999999999999996,
@@ -1734,12 +1734,12 @@
       "trajectory": 0.0,
       "consistency": 0.03,
       "anchor_penalty": -0.0,
-      "base": 0.48964169931857776,
+      "base": 0.4896416993185778,
       "availability_multiplier": 1.25,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.6120521241482222,
-      "cross_encoder": -2.569791316986084
+      "composite": 0.6120521241482223,
+      "cross_encoder": -2.569789409637451
     }
   },
   "CAND_0051004": {
@@ -1760,7 +1760,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.609097653978099,
-      "cross_encoder": -1.9642106294631958
+      "cross_encoder": -1.964211106300354
     }
   },
   "CAND_0080372": {
@@ -1781,7 +1781,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.606407576838502,
-      "cross_encoder": -1.3910530805587769
+      "cross_encoder": -1.3910515308380127
     }
   },
   "CAND_0015578": {
@@ -1802,7 +1802,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.6027968718861338,
-      "cross_encoder": -2.5765151977539062
+      "cross_encoder": -2.5765116214752197
     }
   },
   "CAND_0040677": {
@@ -1823,7 +1823,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.5976900545510345,
-      "cross_encoder": -1.601001501083374
+      "cross_encoder": -1.6010010242462158
     }
   },
   "CAND_0020991": {
@@ -1844,7 +1844,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.596387694705869,
-      "cross_encoder": -2.0054094791412354
+      "cross_encoder": -2.0054078102111816
     }
   },
   "CAND_0007412": {
@@ -1865,7 +1865,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.5960347528741724,
-      "cross_encoder": -3.309817314147949
+      "cross_encoder": -3.309813976287842
     }
   },
   "CAND_0069638": {
@@ -1886,7 +1886,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.5943026152187102,
-      "cross_encoder": -3.571197032928467
+      "cross_encoder": -3.5711934566497803
     }
   },
   "CAND_0089470": {
@@ -1907,7 +1907,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.5923091269756258,
-      "cross_encoder": -2.584824800491333
+      "cross_encoder": -2.5848240852355957
     }
   },
   "CAND_0015528": {
@@ -1928,7 +1928,7 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.5887101640353628,
-      "cross_encoder": -1.290257453918457
+      "cross_encoder": -1.2902579307556152
     }
   },
   "CAND_0070525": {
@@ -1949,13 +1949,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.5857539949612217,
-      "cross_encoder": -3.4072630405426025
+      "cross_encoder": -3.407259464263916
     }
   },
   "CAND_0001930": {
     "rank": 94,
-    "composite": 0.5819703072289504,
-    "base": 0.5938472522744391,
+    "composite": 0.5819703072289505,
+    "base": 0.5938472522744392,
     "parts": {
       "semantic": 0.05049725227443916,
       "career": 0.29,
@@ -1965,12 +1965,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.5938472522744391,
+      "base": 0.5938472522744392,
       "availability_multiplier": 0.9800000000000001,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.5819703072289504,
-      "cross_encoder": -2.521771192550659
+      "composite": 0.5819703072289505,
+      "cross_encoder": -2.5217695236206055
     }
   },
   "CAND_0010541": {
@@ -1991,13 +1991,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.5812242337891962,
-      "cross_encoder": -1.4274961948394775
+      "cross_encoder": -1.4274954795837402
     }
   },
   "CAND_0028527": {
     "rank": 96,
-    "composite": 0.5781806686892725,
-    "base": 0.4700655843002215,
+    "composite": 0.5781806686892726,
+    "base": 0.47006558430022155,
     "parts": {
       "semantic": 0.04756558430022153,
       "career": 0.23999999999999996,
@@ -2007,18 +2007,18 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.4700655843002215,
+      "base": 0.47006558430022155,
       "availability_multiplier": 1.2300000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.5781806686892725,
+      "composite": 0.5781806686892726,
       "cross_encoder": -1.5701065063476562
     }
   },
   "CAND_0067643": {
     "rank": 97,
-    "composite": 0.5756098048717219,
-    "base": 0.5139373257783231,
+    "composite": 0.5756098048717218,
+    "base": 0.513937325778323,
     "parts": {
       "semantic": 0.09243732577832305,
       "career": 0.29,
@@ -2028,18 +2028,18 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.5139373257783231,
+      "base": 0.513937325778323,
       "availability_multiplier": 1.12,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.5756098048717219,
-      "cross_encoder": -3.640986919403076
+      "composite": 0.5756098048717218,
+      "cross_encoder": -3.6409826278686523
     }
   },
   "CAND_0064331": {
     "rank": 98,
-    "composite": 0.5752915311910635,
-    "base": 0.4794096093258861,
+    "composite": 0.5752915311910634,
+    "base": 0.47940960932588605,
     "parts": {
       "semantic": 0.0979096093258861,
       "career": 0.285,
@@ -2049,12 +2049,12 @@
       "trajectory": 0.0,
       "consistency": 0.0,
       "anchor_penalty": -0.0,
-      "base": 0.4794096093258861,
+      "base": 0.47940960932588605,
       "availability_multiplier": 1.2000000000000002,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.5752915311910635,
-      "cross_encoder": -1.218671441078186
+      "composite": 0.5752915311910634,
+      "cross_encoder": -1.2186708450317383
     }
   },
   "CAND_0067717": {
@@ -2075,13 +2075,13 @@
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
       "composite": 0.5740579512374476,
-      "cross_encoder": -1.3894704580307007
+      "cross_encoder": -1.3894727230072021
     }
   },
   "CAND_0068985": {
     "rank": 100,
-    "composite": 0.5709219869366547,
-    "base": 0.5286314693857914,
+    "composite": 0.5709219869366549,
+    "base": 0.5286314693857915,
     "parts": {
       "semantic": 0.11913146938579147,
       "career": 0.29,
@@ -2091,12 +2091,12 @@
       "trajectory": 0.0,
       "consistency": 0.03,
       "anchor_penalty": -0.0,
-      "base": 0.5286314693857914,
+      "base": 0.5286314693857915,
       "availability_multiplier": 1.08,
       "dq_multiplier": 1.0,
       "honeypot_multiplier": 1.0,
-      "composite": 0.5709219869366547,
-      "cross_encoder": -2.2627596855163574
+      "composite": 0.5709219869366549,
+      "cross_encoder": -2.2627615928649902
     }
   }
 }
