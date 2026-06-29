@@ -1,4 +1,4 @@
-# Redrob Ranker — System Architecture
+# Glasshouse — System Architecture
 
 Full-system diagram. Renders natively on GitHub (Mermaid).
 

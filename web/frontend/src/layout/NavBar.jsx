@@ -91,7 +91,7 @@ export default function NavBar({ expanded, setExpanded, theme, toggleTheme, navP
         <Radar className="h-4 w-4 transition-transform duration-700 group-hover:rotate-90" />
       </div>
       <span className="text-body-sm font-semibold tracking-tight text-foreground transition-colors duration-200 group-hover:text-primary">
-        Redrob Ranker
+        Glasshouse
       </span>
     </NavLink>
   );

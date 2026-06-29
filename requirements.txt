@@ -1,4 +1,4 @@
-# Redrob Ranker — all dependencies across all phases.
+# Glasshouse — all dependencies across all phases.
 # Versions pinned to the environment the submission was built and
 # verified with (Python 3.11, CPU-only at rank time).
 

@@ -1,4 +1,4 @@
-"""main.py — FastAPI backend for the Redrob Ranker web interface (Phase 4).
+"""main.py — FastAPI backend for the Glasshouse web interface (Phase 4).
 
 Thin read-mostly wrapper around the Phase 1-3 artifacts. It never modifies
 pipeline code: /api/rerank shells out to `python pipeline\rank.py` exactly as
@@ -131,7 +131,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Redrob Ranker",
+    title="Glasshouse",
     description="""
 Intelligent candidate ranking system for the Redrob Hackathon (Track 01).
 

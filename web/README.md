@@ -1,4 +1,4 @@
-# Redrob Ranker — Web Interface (Phase 4)
+# Glasshouse — Web Interface (Phase 4)
 
 Two ways to demo the ranking system without touching the terminal:
 
@@ -100,7 +100,7 @@ build complexity on Spaces).
 
    ```yaml
    ---
-   title: Redrob Ranker
+   title: Glasshouse
    emoji: 📡
    colorFrom: blue
    colorTo: indigo
@@ -135,7 +135,7 @@ Notes:
 ## 4. Design system
 
 All styling (both UIs) follows the generated UI UX Pro Max design system
-"Redrob Ranker": Data-Dense Dashboard style, Fira Code headings /
+"Glasshouse": Data-Dense Dashboard style, Fira Code headings /
 Fira Sans body, primary `#1E40AF`, accent `#D97706`, status colors
 (green/amber/red) reserved for status, no gradients, no emoji icons,
 WCAG AA contrast. Tokens live in `web\frontend\tailwind.config.js` and the

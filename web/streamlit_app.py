@@ -1,11 +1,11 @@
-"""streamlit_app.py — HuggingFace Spaces entry point for Redrob Ranker.
+"""streamlit_app.py — HuggingFace Spaces entry point for Glasshouse.
 
 Pure-Streamlit replica of the React app's key views (metrics bar, ranked
 table, candidate profile dialog, scoring-only subset preview, re-rank with
 live progress). Loads the precomputed artifacts directly — no FastAPI
 process needed, which keeps the Space to a single server.
 
-Design system: UI UX Pro Max "Redrob Ranker" — Data-Dense Dashboard.
+Design system: UI UX Pro Max "Glasshouse" — Data-Dense Dashboard.
 Fira Code / Fira Sans, primary #1E40AF, accent #D97706, status colors only.
 
 Run locally:
@@ -56,7 +56,7 @@ C = {
 PART_COLORS = {"semantic": "#E55B44", "career": "#5B21B6", "skill": "#059669",
                "experience": "#D97706", "assessment": "#059669"}
 
-st.set_page_config(page_title="Redrob Ranker", page_icon="📡", layout="wide")
+st.set_page_config(page_title="Glasshouse", page_icon="📡", layout="wide")
 
 st.markdown(f"""
 <style>
@@ -563,7 +563,7 @@ def main():
     left, right = st.columns([3, 1])
     with left:
         st.markdown(f"<h1 style='color:{C['foreground']};font-size:26px;"
-                    f"margin-bottom:0'>Redrob Ranker</h1>",
+                    f"margin-bottom:0'>Glasshouse</h1>",
                     unsafe_allow_html=True)
         if SUBMISSION_CSV.exists():
             ts = datetime.fromtimestamp(SUBMISSION_CSV.stat().st_mtime,

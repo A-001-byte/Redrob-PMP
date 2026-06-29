@@ -1,4 +1,4 @@
-# Fairness & Adverse-Impact Audit — Redrob Ranker top-100
+# Fairness & Adverse-Impact Audit — Glasshouse top-100
 
 ## 1. What this audit is — and is not
 

@@ -1,4 +1,4 @@
-# Redrob Ranker — centralized configuration
+# Glasshouse — centralized configuration
 # All weights, thresholds, and tunable parameters in one place.
 # Change a value here; the pipeline picks it up on next run.
 # Units and valid ranges are noted inline.

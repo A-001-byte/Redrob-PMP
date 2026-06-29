@@ -1,4 +1,4 @@
-# Weight Sensitivity Analysis — Redrob Ranker
+# Weight Sensitivity Analysis — Glasshouse
 
 ## Methodology
 

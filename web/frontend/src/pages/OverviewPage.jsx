@@ -169,7 +169,7 @@ export default function OverviewPage() {
   // Live activity log feed simulation
   useEffect(() => {
     const initialLogs = [
-      `[OS INITIALIZATION] Redrob Ranker Engine V2.4 loaded.`,
+      `[OS INITIALIZATION] Glasshouse Engine V2.4 loaded.`,
       `[LEDGER] Connected to database: 100,000 active profiles indexed.`,
       `[AI PROCESS] Model 'cross-encoder/ms-marco' warmed in VRAM.`,
       `[INTELLIGENCE] System status set to operational.`

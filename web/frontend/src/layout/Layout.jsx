@@ -126,7 +126,7 @@ export default function Layout() {
           <header className="hidden lg:flex sticky top-0 z-30 h-12 bg-background/80 backdrop-blur-sm border-b border-border/60 items-center px-6 transition-colors duration-200">
             <div className="flex items-center gap-2">
               <span className="text-label font-semibold text-muted/50">
-                Redrob Ranker
+                Glasshouse
               </span>
               <span className="text-muted/25 text-xs">/</span>
               <span className="text-body-sm font-semibold text-foreground">

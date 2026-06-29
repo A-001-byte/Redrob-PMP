@@ -1,4 +1,4 @@
-# Redrob Ranker — Full Project Context
+# Glasshouse — Full Project Context
 
 > Hand-off document for AI agents / new developers. Everything below is verified
 > against the actual source as of 2026-06-11. Repo:
@@ -282,7 +282,7 @@ candidates.jsonl ("not deployed on this Space") or submission.csv. Spaces
 deploy layout + frontmatter documented in `web/README.md` §3 (SDK streamlit,
 `app_file: web/streamlit_app.py`, LFS for everything > 10 MB).
 
-**Design system** ("Redrob Ranker", Data-Dense Dashboard): Fira Code headings
+**Design system** ("Glasshouse", Data-Dense Dashboard): Fira Code headings
 / Fira Sans body; primary `#1E40AF`, secondary `#3B82F6`, accent `#D97706`,
 background `#F8FAFC`, destructive `#DC2626`; green/amber/red reserved for
 status; no gradients, no emoji icons, WCAG AA. Tokens in

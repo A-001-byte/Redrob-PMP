@@ -1,5 +1,5 @@
 {
-  "title": "Fairness & Adverse-Impact Audit — Redrob Ranker top-100",
+  "title": "Fairness & Adverse-Impact Audit — Glasshouse top-100",
   "disclaimer": "This audit borrows the four-fifths (80%) impact-ratio methodology from US employment law as an engineering health-check. The attributes below are NOT protected classes; the dataset contains no gender, age, or ethnicity fields, and this system deliberately does not infer them from names or any other signal. This is a fairness-aware design practice, not a legal compliance claim — a real NYC Local Law 144 audit requires an independent auditor and actual demographic data.",
   "attributes_audited": [
     "education tier",

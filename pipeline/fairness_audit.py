@@ -217,7 +217,7 @@ def decomposition_note(attr: dict, members: dict[str, list[str]],
 # ---------------------------------------------------------------------------
 def render_markdown(result: dict) -> str:
     L = []
-    L.append("# Fairness & Adverse-Impact Audit — Redrob Ranker top-100\n")
+    L.append("# Fairness & Adverse-Impact Audit — Glasshouse top-100\n")
     L.append("## 1. What this audit is — and is not\n")
     L.append(result["disclaimer"] + "\n")
     L.append("## 2. Attributes audited vs unavailable\n")
@@ -315,7 +315,7 @@ def main() -> None:
         attributes.append(attr)
 
     result = {
-        "title": "Fairness & Adverse-Impact Audit — Redrob Ranker top-100",
+        "title": "Fairness & Adverse-Impact Audit — Glasshouse top-100",
         "disclaimer": (
             "This audit borrows the four-fifths (80%) impact-ratio methodology "
             "from US employment law as an engineering health-check. The "

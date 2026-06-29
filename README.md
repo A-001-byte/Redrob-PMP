@@ -1,10 +1,11 @@
-# Redrob Ranker — Intelligent Candidate Ranking System
+# Glasshouse — Intelligent Candidate Ranking System
 
 ![CI](https://github.com/A-001-byte/Redrob-PMP/actions/workflows/ci.yml/badge.svg)
 
 ## Redrob Hackathon | Track 01: The Data & AI Challenge
 
-Redrob Ranker ranks 100,000 raw candidate profiles against the Senior ML
+**Glasshouse** — an intelligent candidate ranking system built for the Redrob
+Hackathon (Track 01). Glasshouse ranks 100,000 raw candidate profiles against the Senior ML
 Engineer (Search & Ranking) job description and emits a defensible top-100 in
 ~45 seconds on CPU, with zero network access at rank time. It works as a
 six-layer funnel: cheap dense retrieval prunes 100K to 5,000, hybrid

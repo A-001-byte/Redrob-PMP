@@ -1,4 +1,4 @@
-# Redrob Ranker — rank-time dependencies only (used by the Dockerfile).
+# Glasshouse — rank-time dependencies only (used by the Dockerfile).
 # Same pins as requirements.txt minus the Phase-4 web stack
 # (fastapi, uvicorn, streamlit), which the ranker never imports.
 sentence-transformers==5.5.1
